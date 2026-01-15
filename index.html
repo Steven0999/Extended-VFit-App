@@ -3,1144 +3,1533 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FitTrack Pro V10</title>
-
+    <title>FitTrack Pro V8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
-        /* ============================================================
-           FitTrack Pro V10 — Integrated Styles
-           ============================================================ */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-            margin: 0;
-            padding-bottom: 5rem;
-        }
-
-        button { cursor: pointer; transition: all 0.25s ease; border: none; outline: none; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-        button:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-
-        input, select, textarea {
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            border: 1px solid #e5e7eb;
-            background-color: #f8fafc;
-            padding: 0.75rem 1rem;
-            border-radius: 1rem;
-            font-weight: 700;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-        }
-        input:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
-
-        .glass-card {
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.75);
-            border: 1px solid rgba(226, 232, 240, 0.3);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
-            border-radius: 2.5rem;
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
-
-        .progress-ring-circle { transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.35s; }
-        .hidden { display: none !important; }
-
-        /* Navigation */
-        nav { z-index: 50; }
-        .nav-item.active i { color: #6366f1 !important; transform: scale(1.1); }
-        .nav-item.active span { color: #6366f1 !important; font-weight: 900; }
-        .nav-bg { background-color: rgba(99,102,241,0.1); transition: background 0.2s; }
-
-        /* Tabs */
-        .tab-content { opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; display: none; }
-        .tab-content.active { opacity: 1; transform: translateY(0); display: block; pointer-events: auto; }
-
-        /* Photos & Lists */
-        .photo-slot { border: 2px dashed #cbd5e1; border-radius: 1.5rem; height: 5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .photo-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        #daily-log-list, #history-list, #custom-db-list, #exercise-list {
-            max-height: 24rem; overflow-y: auto; scrollbar-width: thin;
+        :root {
+            --brand-primary: #4f46e5;
+            --brand-secondary: #f43f5e;
+            --bg-main: #f8fafc;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        /* Badge Styling */
-        .badge-locked { filter: grayscale(1) opacity(0.5); }
-        .badge-unlocked { filter: grayscale(0) opacity(1); animation: bounce 0.5s ease; }
-        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-
-        /* Scanner Modal & General Modals */
-        #scanner-overlay, #generic-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 100; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background-color: var(--bg-main);
+            color: #1e293b;
         }
-        #reader { width: 300px; height: 300px; background: #000; border-radius: 20px; overflow: hidden; }
-
-        .dropdown-list {
-            position: absolute; width: 100%; background: white; border: 1px solid #e2e8f0;
-            border-radius: 1rem; margin-top: 5px; z-index: 60; max-height: 150px; overflow-y: auto;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
 
-        @media (max-width: 640px) {
-            #dashboard .grid, #metrics .grid { grid-template-columns: 1fr !important; }
+        /* Scanner Styles */
+        #scanner-mount {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1.5rem;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .scanner-laser {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%; height: 2px;
+            background-color: #f43f5e;
+            box-shadow: 0 0 15px #f43f5e;
+            animation: scanning 2s infinite ease-in-out;
+            z-index: 40; pointer-events: none;
+        }
+        @keyframes scanning {
+            0%, 100% { transform: translate(-50%, -30px); opacity: 0.2; }
+            50% { transform: translate(-50%, 30px); opacity: 1; }
+        }
+
+        /* Tab Animations */
+        .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Charts */
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Photo Slots */
+        .photo-slot {
+            aspect-ratio: 3/4;
+            background: #f1f5f9;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px dashed #e2e8f0;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .photo-slot:active { transform: scale(0.98); border-color: var(--brand-primary); }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #fff;
+            width: 24px; height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Workout Inputs */
+        .set-row input {
+            text-align: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            font-weight: 700;
+            width: 100%;
+        }
+        
+        .metric-bar-bg { background: #e2e8f0; border-radius: 999px; height: 12px; position: relative; overflow: hidden;}
+        .metric-bar-fill { background: var(--brand-primary); height: 100%; border-radius: 999px; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .diff-indicator { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+        .diff-pos { background: #fef2f2; color: #ef4444; }
+        .diff-neg { background: #ecfdf5; color: #10b981; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+
+        /* Tutorial Custom Scroll */
+        .tutorial-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        /* Muscle Selection Styling */
+        .muscle-chip {
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+        .muscle-chip.selected {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        /* Updated Core Grid: Narrowed input columns */
+        .core-input-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.35rem;
+            align-items: center;
+        }
+
+        /* Food Search Dropdown Fix */
+        .search-results-container {
+            position: relative;
+            z-index: 60;
+        }
+
+        /* Added from first code: Toggle Styles */
+        input, select, textarea {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+        .toggle-checkbox {
+            right: 4px;
+            transition: all 0.3s;
+        }
+        .toggle-label {
+            background-color: #e2e8f0;
+            width: 48px;
+            height: 24px;
+            border-radius: 9999px;
+            cursor: pointer;
+            position: relative;
         }
     </style>
 </head>
-<body class="pb-28 bg-slate-50 font-sans">
+<body class="pb-28">
 
-<!-- Generic Modal Overlay -->
-<div id="generic-modal-overlay" class="p-4">
-    <div class="glass-card w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto relative">
-        <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400"><i data-lucide="x"></i></button>
-        <h3 id="modal-title" class="text-lg font-black text-slate-800 mb-4">Add Exercise</h3>
-        <div id="modal-content" class="space-y-4">
-            <!-- Content injected by JS -->
-        </div>
-        <div id="modal-footer" class="flex gap-2 mt-6">
-            <button onclick="closeModal()" class="flex-1 bg-slate-100 text-slate-600 p-4 rounded-2xl font-bold">Cancel</button>
-            <button id="modal-confirm-btn" class="flex-1 bg-indigo-600 text-white p-4 rounded-2xl font-bold">Save</button>
-        </div>
-    </div>
-</div>
-
-<!-- Scanner Overlay -->
-<div id="scanner-overlay">
-    <div class="glass-card w-[90%] max-w-sm p-4 text-center">
-        <h3 class="font-black text-slate-800 mb-4">Scan Food Barcode</h3>
-        <div id="reader" class="mx-auto mb-4"></div>
-        <button onclick="stopScanner()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Cancel</button>
-    </div>
-</div>
-
-<header class="bg-white/70 backdrop-blur-md border-b border-slate-100 px-6 py-5 sticky top-0 z-40 flex justify-between items-center">
-    <div>
-        <h1 class="text-xl font-extrabold tracking-tight text-orange-400">Vaughan<span class="text-slate-600">Fitness</span></h1>
-        <div class="flex items-center gap-2 mt-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <p id="status-date" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Live View</p>
-        </div>
-    </div>
-    <div class="flex items-center gap-2">
-        <button onclick="openEducationQuiz()" class="flex flex-col items-center gap-1 group">
-            <div class="w-10 h-10 flex items-center justify-center bg-indigo-50 rounded-2xl group-hover:bg-indigo-100 transition-colors">
-                <i data-lucide="graduation-cap" class="w-5 h-5 text-indigo-600"></i>
-            </div>
-            <span class="text-[8px] font-black uppercase text-indigo-600 tracking-tighter">Learn</span>
-        </button>
-
-        <div id="streak-container" class="flex flex-col items-center gap-1">
-            <div class="flex items-center gap-1 bg-orange-50 px-3 py-1.5 h-10 rounded-2xl border border-orange-100">
-                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
-                <span id="streak-count" class="text-xs font-black text-orange-600">0</span>
-            </div>
-            <span class="text-[8px] font-black uppercase text-orange-500 tracking-tighter">Streak</span>
-        </div>
-
-        <button onclick="switchTab('settings')" class="flex flex-col items-center gap-1 group">
-            <div class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-2xl group-hover:bg-slate-100 transition-colors">
-                <i data-lucide="settings" class="w-5 h-5 text-slate-600"></i>
-            </div>
-            <span class="text-[8px] font-black uppercase text-slate-500 tracking-tighter">Settings</span>
-        </button>
-    </div>
-</header>
-
-<main class="max-w-xl mx-auto p-4 space-y-6">
-
-    <section id="dashboard" class="tab-content active space-y-6">
-        <!-- Calorie Ring -->
-        <div class="glass-card rounded-[2.5rem] p-8 flex flex-col items-center relative overflow-hidden">
-            <div class="relative w-48 h-48 flex items-center justify-center">
-                <svg class="w-full h-full">
-                    <circle class="text-slate-100" stroke-width="12" stroke="currentColor" fill="transparent" r="85" cx="96" cy="96"/>
-                    <circle id="calorie-progress" class="text-indigo-600 progress-ring-circle" stroke-width="12" stroke-dasharray="534" stroke-dashoffset="534" stroke-linecap="round" stroke="currentColor" fill="transparent" r="85" cx="96" cy="96"/>
-                </svg>
-                <div class="absolute text-center">
-                    <div id="dash-calories" class="text-4xl font-black text-slate-900">0</div>
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kcal Eaten</div>
-                </div>
-            </div>
-            <div class="grid grid-cols-3 w-full gap-4 mt-8 border-t border-slate-100 pt-6">
-                <div class="text-center">
-                    <div id="dash-protein" class="font-bold text-slate-900">0g</div>
-                    <div class="text-[9px] font-black uppercase text-slate-400">Protein</div>
-                </div>
-                <div class="text-center border-x border-slate-100">
-                    <div id="dash-carbs" class="font-bold text-slate-900">0g</div>
-                    <div class="text-[9px] font-black uppercase text-slate-400">Carbs</div>
-                </div>
-                <div class="text-center">
-                    <div id="dash-fat" class="font-bold text-slate-900">0g</div>
-                    <div class="text-[9px] font-black uppercase text-slate-400">Fats</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Level Progress -->
-        <div class="glass-card p-6">
-            <div class="flex justify-between items-end mb-2">
-                <div>
-                    <p class="text-[10px] font-black uppercase text-slate-400">Level <span id="user-lvl-display">1</span></p>
-                    <h4 id="user-tier-display" class="font-bold text-slate-800">Bronze Athlete</h4>
-                </div>
-                <p class="text-[10px] font-bold text-slate-500"><span id="user-xp-display">0</span> / 500 XP</p>
-            </div>
-            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div id="xp-progress-bar" class="h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Achievements -->
-        <div class="glass-card p-6">
-            <h3 class="text-sm font-black uppercase tracking-widest text-slate-800 mb-4 flex items-center gap-2">
-                <i data-lucide="award" class="w-4 h-4 text-indigo-500"></i> Achievements
-            </h3>
-            <div id="badge-grid" class="grid grid-cols-4 gap-4"></div>
-        </div>
-
-        <div class="glass-card rounded-[2.5rem] p-6 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
-                    <i data-lucide="droplet" class="text-blue-500"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-800">Hydration</h4>
-                    <p id="water-count" class="text-xs text-slate-500">0 / 2.5 Liters</p>
-                </div>
-            </div>
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-5 sticky top-0 z-40 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-extrabold tracking-tight text-indigo-600">
+                Vaughan<span class="text-slate-600">Fitness</span>
+            </h1>
             <div class="flex items-center gap-2">
-                <button onclick="updateWater(-250)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-red-500 font-bold">-</button>
-                <button onclick="updateWater(250)" class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold">+</button>
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <p id="status-date" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Loading...</p>
             </div>
         </div>
-    </section>
-
-    <section id="training" class="tab-content space-y-6">
-        <div class="flex bg-slate-100 p-1.5 rounded-2xl">
-            <button onclick="setTrainingView('setup')" id="train-tab-setup" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Workout</button>
-            <button onclick="setTrainingView('library')" id="train-tab-library" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-slate-400">Library</button>
+        <div class="flex items-center gap-2">
+            <button onclick="switchTab('education')" class="w-10 h-10 flex items-center justify-center bg-indigo-50 rounded-2xl hover:bg-indigo-100 transition-colors">
+                <i data-lucide="book-open" class="w-5 h-5 text-indigo-600"></i>
+            </button>
+            <button onclick="openTutorial()" class="px-4 h-10 flex items-center justify-center bg-amber-50 text-amber-600 rounded-2xl hover:bg-amber-100 transition-colors font-bold text-xs uppercase tracking-wider">
+                Tutorial
+            </button>
+            <button onclick="switchTab('settings')" class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5 text-slate-600"></i>
+            </button>
         </div>
+    </header>
 
-        <div id="workout-setup-view" class="space-y-4">
+    <main class="max-w-xl mx-auto p-4 space-y-6">
+        
+        <section id="dashboard" class="tab-content active space-y-6">
+            <div class="glass-card rounded-[2.5rem] p-8 flex flex-col items-center relative overflow-hidden">
+                <div class="relative w-48 h-48 flex items-center justify-center">
+                    <svg class="w-full h-full">
+                        <circle class="text-slate-100" stroke-width="12" stroke="currentColor" fill="transparent" r="85" cx="96" cy="96" />
+                        <circle id="calorie-progress" class="text-indigo-600 progress-ring-circle" stroke-width="12" stroke-dasharray="534" stroke-dashoffset="534" stroke-linecap="round" stroke="currentColor" fill="transparent" r="85" cx="96" cy="96" />
+                    </svg>
+                    <div class="absolute text-center">
+                        <div id="dash-calories" class="text-4xl font-black text-slate-900">0</div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kcal Eaten</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 w-full gap-4 mt-8 border-t border-slate-100 pt-6">
+                    <div class="text-center">
+                        <div id="dash-protein" class="font-bold text-slate-900">0g</div>
+                        <div class="text-[9px] font-black uppercase text-slate-400">Protein</div>
+                    </div>
+                    <div class="text-center border-x border-slate-100">
+                        <div id="dash-carbs" class="font-bold text-slate-900">0g</div>
+                        <div class="text-[9px] font-black uppercase text-slate-400">Carbs</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="dash-fat" class="font-bold text-slate-900">0g</div>
+                        <div class="text-[9px] font-black uppercase text-slate-400">Fats</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-[2.5rem] p-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-cyan-50 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="droplet" class="text-cyan-500"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Hydration</h4>
+                        <p id="water-count" class="text-xs text-slate-500">0 / 2.5 Liters</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="updateWater(-250)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 font-bold hover:bg-slate-100">-</button>
+                    <button onclick="updateWater(250)" class="w-10 h-10 rounded-xl bg-cyan-500 text-white font-bold hover:bg-cyan-600 shadow-lg shadow-cyan-200">+</button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-xl">
+                <div class="relative z-10">
+                    <h3 class="text-lg font-bold mb-1">Weekly Muscle Volume</h3>
+                    <p id="dash-sessions" class="text-slate-400 text-xs mb-4 uppercase font-black tracking-widest">Mon - Sun Tracker</p>
+                    <div id="muscle-volume-stats" class="grid grid-cols-2 gap-y-3 gap-x-6 mb-6"></div>
+                    <button onclick="switchTab('training')" class="bg-indigo-600 px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition">Log Workout</button>
+                </div>
+                <i data-lucide="bar-chart-3" class="absolute -right-6 -bottom-6 text-white/5 w-40 h-40"></i>
+            </div>
+
+            <!-- Added from first code: Mission & Wins Section -->
+            <div class="glass-card rounded-[2.5rem] p-6">
+                <h2 class="text-lg font-bold mb-3 flex items-center">
+                    <span class="mr-2">🚀</span> Daily Mission
+                </h2>
+                <div id="mission-display" class="italic text-indigo-600 mb-4 text-lg">Set your mission in settings...</div>
+                
+                <h2 class="text-lg font-bold mb-3 flex items-center">
+                    <span class="mr-2">🏆</span> Today's Wins
+                </h2>
+                <ul id="wins-list" class="space-y-2 text-slate-600">
+                    <li class="text-sm">• Log your first win in settings</li>
+                </ul>
+            </div>
+
+            <!-- Added from first code: Tracker Add-ons (Conditional) -->
+            <div id="addon-container" class="space-y-4">
+                <!-- Step Tracker Card -->
+                <div id="card-steps" class="glass-card rounded-[2.5rem] p-6 hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-slate-500 text-xs uppercase">Steps</p>
+                        <span id="step-progress" class="text-indigo-500 text-xs font-bold">0%</span>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <input type="number" id="step-input" placeholder="Enter steps" class="w-24 text-sm" onchange="updateSteps()">
+                        <p class="text-lg font-bold"><span id="current-steps">0</span> / <span id="goal-steps">10000</span></p>
+                    </div>
+                </div>
+
+                <!-- Habit Tracker Card -->
+                <div id="card-habits" class="glass-card rounded-[2.5rem] p-6 hidden">
+                    <p class="text-slate-500 text-xs uppercase mb-3">Habit Tracker</p>
+                    <div id="habits-display" class="flex gap-2 flex-wrap">
+                        <!-- Dynamic habits -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="training" class="tab-content space-y-6">
             <div id="workout-setup" class="space-y-4">
-                <div class="glass-card p-6 rounded-[2.5rem] border border-slate-100 shadow-sm text-center">
+                <div class="glass-card p-6 rounded-[2.5rem] text-center">
                     <div class="flex bg-slate-100 p-1 rounded-2xl mb-6 mx-auto w-fit">
                         <button onclick="setWorkoutEnv('gym')" id="env-tab-gym" class="px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Gym</button>
                         <button onclick="setWorkoutEnv('home')" id="env-tab-home" class="px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-slate-400">Home</button>
                     </div>
-                    <select id="workout-focus" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold mb-6 appearance-none text-center">
-                        <option value="Full Body">Full Body</option>
-                        <option value="Push">Upper Body (Push)</option>
-                        <option value="Pull">Upper Body (Pull)</option>
-                        <option value="Legs">Lower Body (Legs)</option>
-                    </select>
+                    
+                    <div class="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="dumbbell" class="text-indigo-600 w-8 h-8"></i>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold mb-2">Plan your Session</h3>
+                    <p class="text-xs text-slate-500 mb-4">Equipment: <span id="current-env-label" class="text-indigo-600 font-bold uppercase">Gym</span></p>
+                    
+                    <div class="mb-4 text-left">
+                        <label class="text-[9px] font-black uppercase text-slate-400 ml-2 mb-1 block">Date</label>
+                        <input type="date" id="workout-date-input" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none text-center text-slate-700">
+                    </div>
+
+                    <div class="mb-4 text-left">
+                        <label class="text-[9px] font-black uppercase text-slate-400 ml-2 mb-1 block">Focus</label>
+                        <select id="workout-focus" onchange="toggleSpecificMuscleGrid()" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold appearance-none text-center text-slate-700 outline-none">
+                            <option>Full Body</option>
+                            <option>Upper Body</option>
+                            <option>Lower Body/Legs</option>
+                            <option>Push</option>
+                            <option>Pull</option>
+                            <option>Squat</option>
+                            <option>Hinge</option>
+                            <option>Specific Muscle</option>
+                        </select>
+                    </div>
+
+                    <div id="muscle-selection-container" class="mb-4 text-left hidden">
+                        <label class="text-[9px] font-black uppercase text-slate-400 ml-2 mb-2 block">Select Muscles</label>
+                        <div id="muscle-selection-grid" class="grid grid-cols-3 gap-2"></div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-2xl mb-6 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase text-slate-500">Add Cardio</span>
+                            <input type="checkbox" id="add-cardio-check" onchange="toggleCardioOptions()" class="w-5 h-5 accent-indigo-600">
+                        </div>
+                        <div id="cardio-options" class="hidden space-y-2 pt-2 border-t border-slate-200">
+                            <select id="cardio-type" class="w-full p-2 bg-white rounded-lg text-xs font-bold outline-none">
+                                <option>Steady State</option>
+                                <option>HIIT Training</option>
+                            </select>
+                            <select id="cardio-exercise" class="w-full p-2 bg-white rounded-lg text-xs font-bold outline-none">
+                                <option>Treadmill</option>
+                                <option>Rowing</option>
+                                <option>Bike</option>
+                                <option>Assult Bike</option>
+                                <option>Ski-Erg</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-[10px] font-black uppercase text-slate-500">Add Core</span>
+                            <input type="checkbox" id="add-core-check" class="w-5 h-5 accent-indigo-600">
+                        </div>
+                    </div>
+                    
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="startManualWorkout()" class="p-4 bg-slate-900 text-white rounded-[1.5rem] font-bold text-sm flex flex-col items-center gap-2">
-                            <i data-lucide="plus-circle"></i> <span>Manual</span>
-                        </button>
-                        <button onclick="generateAIWorkout()" class="p-4 bg-indigo-600 text-white rounded-[1.5rem] font-bold text-sm flex flex-col items-center gap-2">
-                            <i data-lucide="sparkles"></i> <span>AI Suggest</span>
-                        </button>
+                        <button onclick="startManualWorkout()" class="p-4 bg-slate-900 text-white rounded-[1.5rem] font-bold text-sm flex flex-col items-center gap-2 hover:bg-slate-800 transition"><i data-lucide="plus-circle"></i> Manual</button>
+                        <button onclick="generateAIWorkout()" class="p-4 bg-indigo-600 text-white rounded-[1.5rem] font-bold text-sm flex flex-col items-center gap-2 hover:bg-indigo-500 transition"><i data-lucide="sparkles"></i> AI Suggest</button>
                     </div>
                 </div>
             </div>
 
-            <div id="workout-active" class="hidden glass-card rounded-[2.5rem] p-6 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="active-workout-title" class="text-xl font-black text-slate-900">Workout</h3>
-                    <button onclick="cancelWorkout()" class="text-slate-400 hover:text-red-500"><i data-lucide="x-circle"></i></button>
+            <div id="workout-active" class="hidden glass-card rounded-[2.5rem] p-6">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 id="active-workout-title" class="text-xl font-black text-slate-900">Workout</h3>
+                        <p id="workout-timer" class="text-mono text-indigo-600 font-bold tracking-wider mt-1">00:00:00</p>
+                    </div>
+                    <div class="flex gap-2">
+                         <button onclick="cancelWorkout()" class="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 rounded-xl hover:bg-red-100"><i data-lucide="x"></i></button>
+                    </div>
                 </div>
+                
                 <div id="exercise-list" class="space-y-6 mb-6"></div>
-                <button onclick="addExerciseField()" class="w-full p-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs uppercase tracking-widest mb-4">+ Add Exercise</button>
-                <button onclick="saveWorkout()" class="w-full bg-slate-900 text-white p-5 rounded-[1.5rem] font-bold shadow-lg">Finish & Log Session</button>
+                
+                <div id="extra-active-section" class="space-y-6 mb-6"></div>
+
+                <button onclick="addExerciseField()" class="w-full p-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs uppercase tracking-widest mb-4 hover:border-indigo-200 hover:text-indigo-400 transition">+ Add Exercise</button>
+                <button onclick="saveWorkout()" class="w-full bg-slate-900 text-white p-5 rounded-[1.5rem] font-bold shadow-lg hover:bg-slate-800 transition">Finish & Log Session</button>
             </div>
-        </div>
+        </section>
 
-        <div id="workout-library-view" class="hidden space-y-4">
-            <button onclick="openExerciseForm()" class="w-full bg-indigo-600 text-white p-5 rounded-[2.5rem] font-bold flex items-center justify-center gap-2">
-                <i data-lucide="plus-circle"></i> <span>Define New Exercise</span>
-            </button>
-            <div class="glass-card p-4">
-                <h4 class="text-[10px] font-black uppercase text-slate-400 mb-4">Exercise Database</h4>
-                <div id="exercise-database-list" class="space-y-2"></div>
+        <section id="nutrition" class="tab-content space-y-6">
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl">
+                <button onclick="setNutritionTab('log')" id="nut-tab-log" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Diary</button>
+                <button onclick="setNutritionTab('database')" id="nut-tab-db" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-slate-400">Inventory</button>
             </div>
-        </div>
-    </section>
 
-    <section id="nutrition" class="tab-content space-y-6">
-        <div class="flex bg-slate-100 p-1.5 rounded-2xl">
-            <button onclick="setNutritionTab('log')" id="nut-tab-log" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Diary</button>
-            <button onclick="setNutritionTab('database')" id="nut-tab-db" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-slate-400">Inventory</button>
-        </div>
+            <div id="nut-view-log" class="space-y-6">
+                <!-- Make a Meal Button -->
+                <button onclick="openMealModal()" class="w-full bg-white border-2 border-dashed border-indigo-200 p-4 rounded-2xl flex items-center justify-center gap-2 text-indigo-600 font-black uppercase text-[10px] tracking-widest hover:bg-indigo-50 transition-colors">
+                    <i data-lucide="utensils" class="w-4 h-4"></i> Make a Meal
+                </button>
 
-        <div id="nut-view-log" class="space-y-6">
-            <div class="flex gap-2">
-                <div class="relative flex-1">
-                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
-                    <input id="food-search" placeholder="Search your database..." class="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm focus:ring-2 ring-indigo-100 outline-none" oninput="handleFoodSearch(this.value)">
-                    <div id="food-results" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl overflow-hidden z-50 shadow-2xl max-h-64 overflow-y-auto"></div>
+                <div class="flex items-center gap-3">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                        <input id="food-search" placeholder="Search inventory..." class="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm focus:ring-2 ring-indigo-100 outline-none" oninput="handleFoodSearch(this.value)">
+                        <div id="food-results" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl overflow-hidden z-50 shadow-2xl max-h-64 overflow-y-auto"></div>
+                    </div>
                 </div>
-                <button onclick="startScanner()" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
-                    <i data-lucide="scan-barcode"></i>
+                <div id="daily-log-list" class="space-y-3"></div>
+                
+                <div id="daily-totals-card" class="glass-card p-6 rounded-[2rem] bg-indigo-50/30 border-indigo-100 hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-[10px] font-black uppercase text-indigo-600">Daily Totals</h4>
+                    </div>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <div id="total-day-cals">0 Kcal</div>
+                        <div id="total-day-prot" class="text-slate-400">0g Protein</div>
+                    </div>
+                </div>
+
+                <button onclick="archiveDailyNutrition()" class="w-full bg-emerald-600 text-white p-5 rounded-[1.5rem] font-bold shadow-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                    <i data-lucide="save"></i> Save Daily Log
                 </button>
             </div>
-            <div id="daily-log-list" class="space-y-3"></div>
-        </div>
 
-        <div id="nut-view-db" class="hidden space-y-6">
-            <div class="glass-card p-4 space-y-4">
-                <h4 class="text-xs font-black uppercase text-slate-400">Add Custom Item</h4>
-                <input id="new-food-name" placeholder="Food Name" class="w-full bg-slate-50 text-sm">
-                <div class="grid grid-cols-2 gap-2">
-                    <input id="new-food-cal" type="number" placeholder="Kcal" class="bg-slate-50 text-sm">
-                    <input id="new-food-prot" type="number" placeholder="Protein (g)" class="bg-slate-50 text-sm">
+            <div id="nut-view-db" class="hidden space-y-6">
+                <div id="scanner-container" class="hidden space-y-4">
+                    <div class="aspect-video bg-black rounded-3xl overflow-hidden relative border-4 border-white shadow-xl">
+                        <div id="scanner-mount"></div>
+                        <div id="scan-overlay" class="absolute inset-0 border-2 border-white/30 pointer-events-none flex items-center justify-center">
+                            <div class="w-64 h-40 border-2 border-indigo-500 rounded-xl"></div>
+                        </div>
+                    </div>
+                    <button onclick="stopScanner()" class="w-full bg-slate-100 text-slate-600 p-4 rounded-2xl font-bold">Stop Scanner</button>
                 </div>
-                <button onclick="addCustomFood()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm">Save to Inventory</button>
-            </div>
-            <div id="custom-db-list" class="divide-y divide-slate-50 max-h-80 overflow-y-auto"></div>
-        </div>
-    </section>
 
-    <section id="metrics" class="tab-content space-y-6">
-        <div class="glass-card p-8 rounded-[3rem] space-y-8">
-            <div>
-                <span class="text-[10px] font-black uppercase text-slate-400 block mb-1">Body Weight (kg)</span>
-                <input id="body-weight" type="number" step="0.1" placeholder="00.0" class="w-full bg-slate-50 p-4 rounded-xl font-bold text-slate-900 outline-none">
+                <div class="glass-card p-6 rounded-[2.5rem]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-black text-[10px] uppercase text-slate-400 tracking-wider">Product Catalog</h4>
+                        <div class="flex gap-2">
+                            <button onclick="startScanner('db')" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase flex items-center gap-1"><i data-lucide="scan-barcode" class="w-3 h-3"></i> Barcode</button>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="form-name" placeholder="Item Name (e.g., Banana)" class="w-full p-4 bg-slate-50 rounded-2xl font-bold focus:bg-white border-none outline-none transition-colors">
+                        <div class="grid grid-cols-2 gap-3">
+                            <input id="form-cals" type="number" placeholder="Kcal" class="w-full p-4 bg-slate-50 rounded-2xl font-bold outline-none">
+                            <input id="form-prot" type="number" placeholder="Protein (g)" class="w-full p-4 bg-slate-50 rounded-2xl font-bold outline-none">
+                        </div>
+                        <button onclick="saveToDatabase()" class="w-full bg-indigo-600 text-white p-5 rounded-2xl font-black uppercase text-xs tracking-widest mt-2 hover:bg-indigo-500 transition">Add to Inventory</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                    <div class="p-5 bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400 tracking-wider">Your Items</div>
+                    <div id="custom-db-list" class="divide-y divide-slate-50 max-h-80 overflow-y-auto"></div>
+                </div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+        </section>
+
+        <!-- Meal Builder Modal -->
+        <div id="meal-modal" class="fixed inset-0 bg-black/50 backdrop-blur-md z-[200] hidden items-center justify-center p-4">
+            <div class="bg-white w-full max-w-md rounded-[2.5rem] flex flex-col max-h-[90vh] shadow-2xl overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">Make a Meal</h3>
+                        <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Combine Ingredients</p>
+                    </div>
+                    <button onclick="closeMealModal()" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">×</button>
+                </div>
+                
+                <div class="p-6 flex-1 overflow-y-auto space-y-6">
+                    <div class="space-y-4">
+                        <input id="meal-builder-name" placeholder="Meal Name (e.g., High Protein Lunch)" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 ring-indigo-100">
+                        
+                        <div class="relative search-results-container">
+                            <i data-lucide="plus-circle" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                            <input id="meal-item-search" placeholder="Search ingredients..." class="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-slate-200 font-bold outline-none" oninput="handleMealSearch(this.value)">
+                            <button onclick="startScanner('meal')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600"><i data-lucide="scan-barcode" class="w-5 h-5"></i></button>
+                            <div id="meal-search-results" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-slate-100 rounded-2xl overflow-hidden z-[70] shadow-2xl max-h-48 overflow-y-auto"></div>
+                        </div>
+
+                        <div id="meal-builder-list" class="space-y-2">
+                            <!-- Items go here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-slate-50 border-t border-slate-100">
+                    <div id="meal-totals" class="flex justify-between items-center text-[10px] font-black uppercase text-indigo-700 mb-4 hidden">
+                        <span>Total Macros:</span>
+                        <span id="meal-builder-stats">0 Kcal • 0g Protein</span>
+                    </div>
+                    <button onclick="saveMealToInventory()" class="w-full bg-indigo-600 text-white p-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-indigo-100">Save Meal to Inventory</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="portion-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[250] hidden items-center justify-center p-6 transition-opacity">
+            <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 space-y-6 shadow-2xl">
+                <div class="text-center">
+                    <h3 id="portion-item-name" class="text-xl font-black text-slate-900 mb-1">Food Item</h3>
+                    <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Adjust Quantity</p>
+                </div>
+
+                <div class="flex bg-slate-100 p-1 rounded-2xl">
+                    <button onclick="setPortionMode('packet')" id="p-mode-packet" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Packet / Unit</button>
+                    <button onclick="setPortionMode('custom')" id="p-mode-custom" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all text-slate-400">Grams (g)</button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-slate-50 p-6 rounded-3xl text-center">
+                        <span id="qty-label" class="text-[10px] font-black uppercase text-slate-400 block mb-2">Quantity</span>
+                        <div class="flex items-center justify-center gap-6">
+                            <button onclick="adjustPortionQty(-1)" class="w-12 h-12 bg-white rounded-2xl shadow-sm text-slate-600 font-bold text-xl flex items-center justify-center hover:bg-slate-50">-</button>
+                            <input id="portion-qty-input" type="number" value="1" step="0.1" class="w-24 bg-transparent text-center text-3xl font-black text-indigo-600 outline-none">
+                            <button onclick="adjustPortionQty(1)" class="w-12 h-12 bg-white rounded-2xl shadow-sm text-slate-600 font-bold text-xl flex items-center justify-center hover:bg-slate-50">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="closePortionModal()" class="flex-1 p-4 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200">Cancel</button>
+                    <button onclick="confirmLogPortion()" class="flex-1 p-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-500 shadow-lg shadow-indigo-200">Log It</button>
+                </div>
+            </div>
+        </div>
+
+        <section id="metrics" class="tab-content space-y-6">
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl">
+                <button onclick="setMetricsTab('checkin')" id="metrics-tab-checkin" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Check-in</button>
+                <button onclick="setMetricsTab('logs')" id="metrics-tab-logs" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-slate-400">Logs</button>
+            </div>
+
+            <div id="metrics-view-checkin" class="glass-card p-8 rounded-[3rem] space-y-8">
+                <div class="bg-slate-50 p-6 rounded-3xl text-center border border-slate-100">
+                    <span class="text-[10px] font-black uppercase text-slate-400 block mb-2">Current Weight (kg)</span>
+                    <input id="body-weight" type="number" step="0.1" placeholder="00.0" class="w-full bg-transparent text-center text-5xl font-black outline-none text-slate-800">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <label class="text-[9px] font-black text-slate-400 block uppercase mb-1">Waist (cm)</label>
+                        <input id="m-waist" type="number" class="w-full bg-transparent font-bold text-lg text-slate-700 outline-none">
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <label class="text-[9px] font-black text-slate-400 block uppercase mb-1">Chest (cm)</label>
+                        <input id="m-chest" type="number" class="w-full bg-transparent font-bold text-lg text-slate-700 outline-none">
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <label class="text-[9px] font-black text-slate-400 block uppercase mb-1">Arms (cm)</label>
+                        <input id="m-arms" type="number" class="w-full bg-transparent font-bold text-lg text-slate-700 outline-none">
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <label class="text-[9px] font-black text-slate-400 block uppercase mb-1">Thighs (cm)</label>
+                        <input id="m-thighs" type="number" class="w-full bg-transparent font-bold text-lg text-slate-700 outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest text-center">Current Check-in Photos</h4>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="photo-slot" onclick="triggerPhoto('front')">
+                            <img id="img-front" class="hidden">
+                            <i data-lucide="camera" class="text-slate-300 w-6 h-6"></i>
+                            <span class="text-[8px] font-bold uppercase mt-2 text-slate-400">Front</span>
+                        </div>
+                        <div class="photo-slot" onclick="triggerPhoto('side')">
+                            <img id="img-side" class="hidden">
+                            <i data-lucide="camera" class="text-slate-300 w-6 h-6"></i>
+                            <span class="text-[8px] font-bold uppercase mt-2 text-slate-400">Side</span>
+                        </div>
+                        <div class="photo-slot" onclick="triggerPhoto('back')">
+                            <img id="img-back" class="hidden">
+                            <i data-lucide="camera" class="text-slate-300 w-6 h-6"></i>
+                            <span class="text-[8px] font-bold uppercase mt-2 text-slate-400">Back</span>
+                        </div>
+                    </div>
+                    <input type="file" id="photo-input" class="hidden" accept="image/*">
+                </div>
+
+                <button onclick="saveMetrics()" class="w-full bg-rose-500 text-white p-5 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-rose-200 hover:bg-rose-600 transition">Log Check-in</button>
+            </div>
+
+            <div id="metrics-view-logs" class="hidden space-y-6">
+                <div id="progress-card-container" class="bg-slate-900 rounded-[2rem] p-6 text-white shadow-xl overflow-hidden relative hidden">
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-indigo-400"></i>
+                                <h4 class="text-[10px] font-black uppercase tracking-widest">Personal Progress vs Start</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between text-[10px] font-bold uppercase mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span>Weight Change</span>
+                                        <span id="diff-weight" class="diff-indicator">--</span>
+                                    </div>
+                                    <span id="start-weight-label" class="opacity-40">Start: --kg</span>
+                                </div>
+                                <div class="metric-bar-bg bg-white/10">
+                                    <div id="prog-weight-bar" class="metric-bar-fill bg-indigo-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between text-[10px] font-bold uppercase mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span>Waist Change</span>
+                                        <span id="diff-waist" class="diff-indicator">--</span>
+                                    </div>
+                                    <span id="start-waist-label" class="opacity-40">Start: --cm</span>
+                                </div>
+                                <div class="metric-bar-bg bg-white/10">
+                                    <div id="prog-waist-bar" class="metric-bar-fill bg-emerald-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-[10px] font-bold uppercase mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span>Arm Growth</span>
+                                        <span id="diff-arms" class="diff-indicator">--</span>
+                                    </div>
+                                    <span id="start-arms-label" class="opacity-40">Start: --cm</span>
+                                </div>
+                                <div class="metric-bar-bg bg-white/10">
+                                    <div id="prog-arms-bar" class="metric-bar-fill bg-rose-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="metrics-history-list" class="space-y-4"></div>
+            </div>
+        </section>
+
+        <section id="history" class="tab-content space-y-6">
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl">
+                <button onclick="setHistoryTab('training')" id="hist-tab-train" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Training</button>
+                <button onclick="setHistoryTab('nutrition')" id="hist-tab-nut" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all text-slate-400">Food</button>
+            </div>
+            <div id="history-list" class="space-y-4"></div>
+        </section>
+
+        <section id="education" class="tab-content space-y-6">
+            <div class="glass-card rounded-[2.5rem] p-6">
+                <h3 class="text-xl font-bold mb-2">Training Science</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Consistency is key. Focus on progressive overload, adequate protein intake (1.6g-2.2g per kg of bodyweight), and 7-9 hours of sleep for optimal recovery.</p>
+            </div>
+        </section>
+
+        <section id="settings" class="tab-content space-y-6">
+            <div class="glass-card p-6 rounded-[2.5rem] space-y-8">
                 <div>
-                    <label class="text-[9px] font-black uppercase text-slate-400">Shoulders (cm)</label>
-                    <input id="m-shoulders" type="number" class="w-full bg-slate-50 p-4 rounded-xl font-bold text-slate-900 outline-none" placeholder="00">
+                    <h3 class="font-black text-[11px] uppercase text-slate-400 mb-4 tracking-wider">Goal Configuration</h3>
+                    <div class="bg-slate-50 p-4 rounded-2xl">
+                        <label class="text-[9px] font-black text-slate-400 block uppercase mb-1">Daily Calorie Goal</label>
+                        <input type="number" id="config-cals-goal" value="2000" class="w-full bg-transparent font-bold outline-none text-lg" onchange="state.goals.calories = this.value; saveState(); renderDashboard();">
+                    </div>
                 </div>
                 <div>
-                    <label class="text-[9px] font-black uppercase text-slate-400">Chest (cm)</label>
-                    <input id="m-chest" type="number" class="w-full bg-slate-50 p-4 rounded-xl font-bold text-slate-900 outline-none" placeholder="00">
+                    <h3 class="font-black text-[11px] uppercase text-slate-400 mb-4 tracking-wider">Gym Equipment Available</h3>
+                    <div id="gym-equip-list" class="grid grid-cols-2 gap-2"></div>
                 </div>
+                <div>
+                    <h3 class="font-black text-[11px] uppercase text-slate-400 mb-4 tracking-wider">Home Equipment Available</h3>
+                    <div id="home-equip-list" class="grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <!-- Added from first code: Reflection Section -->
+                <div>
+                    <h3 class="font-black text-[11px] uppercase text-slate-400 mb-4 tracking-wider">Daily Reflection</h3>
+                    <div class="space-y-4 bg-slate-50 p-4 rounded-2xl">
+                        <div class="mb-4">
+                            <label class="text-xs text-slate-400 uppercase">Daily Mission</label>
+                            <input type="text" id="settings-mission" placeholder="What is your focus today?" class="mt-1">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase">Today's Wins</label>
+                            <textarea id="settings-wins" placeholder="List your wins (one per line)..." class="h-24 mt-1"></textarea>
+                        </div>
+                        <button onclick="saveReflection()" class="mt-3 w-full bg-indigo-600 p-2 rounded-lg text-sm font-bold text-white">Update Mission & Wins</button>
+                    </div>
+                </div>
+
+                <!-- Added from first code: Tracker Toggles and Goals -->
+                <div>
+                    <h3 class="font-black text-[11px] uppercase text-slate-400 mb-4 tracking-wider">Add-ons & Goal Settings</h3>
+                    <div class="space-y-4 bg-slate-50 p-4 rounded-2xl">
+                        
+                        <!-- Steps Addon -->
+                        <div class="flex items-center justify-between py-3 border-b border-slate-200">
+                            <div>
+                                <p class="font-medium">Step Tracker</p>
+                                <p class="text-xs text-slate-400">Track daily step count</p>
+                            </div>
+                            <label class="toggle-label">
+                                <input type="checkbox" id="toggle-steps" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" onchange="updateAddonUI()">
+                            </label>
+                        </div>
+                        <div id="goal-steps-config" class="py-3 border-b border-slate-200 hidden">
+                            <label class="text-xs text-slate-400 uppercase">Daily Step Goal</label>
+                            <input type="number" id="config-step-goal" value="10000" class="mt-1" onchange="saveConfig()">
+                        </div>
+
+                        <!-- Habits Addon -->
+                        <div class="flex items-center justify-between py-3 border-b border-slate-200">
+                            <div>
+                                <p class="font-medium">Habit Tracker</p>
+                                <p class="text-xs text-slate-400">Daily habit checkboxes</p>
+                            </div>
+                            <label class="toggle-label">
+                                <input type="checkbox" id="toggle-habits" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" onchange="updateAddonUI()">
+                            </label>
+                        </div>
+                        <div id="goal-habits-config" class="py-3 hidden">
+                            <label class="text-xs text-slate-400 uppercase">Your Habits (comma separated)</label>
+                            <input type="text" id="config-habits-list" placeholder="Water, Meditation, Reading" class="mt-1" onchange="saveConfig()">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="resetData()" class="w-full p-5 text-red-500 font-bold bg-red-50 rounded-2xl uppercase text-[10px] tracking-widest hover:bg-red-100 transition">Purge All Data</button>
+                <button onclick="clearData()" class="w-full bg-red-900/50 text-red-400 border border-red-900 p-3 rounded-lg font-bold">Clear All Data</button>
             </div>
-            <div class="grid grid-cols-3 gap-3">
-                <div class="photo-slot" onclick="triggerPhoto('front')">
-                    <input type="file" id="file-front" accept="image/*" class="hidden" onchange="handlePhoto(this,'front')">
-                    <div id="prev-front" class="flex flex-col items-center">
-                        <i data-lucide="camera" class="text-slate-300"></i>
-                        <span class="text-[8px] font-black uppercase text-slate-400">Front</span>
-                    </div>
-                </div>
-                <div class="photo-slot" onclick="triggerPhoto('side')">
-                    <input type="file" id="file-side" accept="image/*" class="hidden" onchange="handlePhoto(this,'side')">
-                    <div id="prev-side" class="flex flex-col items-center">
-                        <i data-lucide="camera" class="text-slate-300"></i>
-                        <span class="text-[8px] font-black uppercase text-slate-400">Side</span>
-                    </div>
-                </div>
-                <div class="photo-slot" onclick="triggerPhoto('back')">
-                    <input type="file" id="file-back" accept="image/*" class="hidden" onchange="handlePhoto(this,'back')">
-                    <div id="prev-back" class="flex flex-col items-center">
-                        <i data-lucide="camera" class="text-slate-300"></i>
-                        <span class="text-[8px] font-black uppercase text-slate-400">Back</span>
-                    </div>
-                </div>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 px-6 py-4 flex justify-between items-center z-50">
+        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item text-indigo-600 flex flex-col items-center gap-1.5 transition-colors">
+            <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg bg-indigo-50 transition-colors"><i data-lucide="layout-grid"></i></div>
+        </button>
+        <button onclick="switchTab('training')" data-tab="training" class="nav-item text-slate-300 flex flex-col items-center gap-1.5 transition-colors">
+            <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg transition-colors"><i data-lucide="dumbbell"></i></div>
+        </button>
+        <button onclick="switchTab('nutrition')" data-tab="nutrition" class="nav-item text-slate-300 flex flex-col items-center gap-1.5 transition-colors">
+            <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg transition-colors"><i data-lucide="apple"></i></div>
+        </button>
+        <button onclick="switchTab('history')" data-tab="history" class="nav-item text-slate-300 flex flex-col items-center gap-1.5 transition-colors">
+            <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg transition-colors"><i data-lucide="calendar"></i></div>
+        </button>
+        <button onclick="switchTab('metrics')" data-tab="metrics" class="nav-item text-slate-300 flex flex-col items-center gap-1.5 transition-colors">
+            <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg transition-colors"><i data-lucide="scale"></i></div>
+        </button>
+    </nav>
+
+    <div id="tutorial-modal" class="modal-overlay">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-4">
+                <h3 class="text-xl font-black text-slate-900">App Guide</h3>
+                <button onclick="closeTutorial()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">×</button>
             </div>
-            <button onclick="saveMetrics()" class="w-full bg-rose-500 text-white p-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-rose-100 mt-4 flex items-center justify-center gap-2">
-                <i data-lucide="save"></i> <span>Log Check-in</span>
-            </button>
+            <div id="tutorial-list" class="space-y-2 tutorial-content pr-2"></div>
         </div>
-    </section>
+    </div>
 
-    <section id="settings" class="tab-content space-y-6">
-        <div class="glass-card p-6 rounded-[2.5rem] space-y-4">
-            <h4 class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Calorie Goal</h4>
-            <input type="number" id="set-cal-goal" class="w-full bg-slate-50 p-4 rounded-xl font-bold text-indigo-600 outline-none" onchange="FitTrack.state.user.calorieGoal = Number(this.value); FitTrack.storage.save();">
+    <div id="edit-modal" class="modal-overlay">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 space-y-6">
+            <h3 id="edit-modal-title" class="text-xl font-black text-slate-900">Edit Entry</h3>
+            <div id="edit-modal-fields" class="space-y-4"></div>
+            <div class="flex gap-3">
+                <button onclick="closeEditModal()" class="flex-1 p-4 bg-slate-100 text-slate-500 rounded-2xl font-bold">Cancel</button>
+                <button id="edit-modal-save" class="flex-1 p-4 bg-indigo-600 text-white rounded-2xl font-bold">Save</button>
+            </div>
         </div>
-        <button onclick="resetData()" class="w-full p-5 text-red-500 font-bold uppercase text-[10px] tracking-widest bg-red-50 rounded-2xl mt-4 flex items-center justify-center gap-2">
-            <i data-lucide="trash-2"></i> <span>Purge All Records</span>
-        </button>
-    </section>
+    </div>
 
-    <section id="history" class="tab-content space-y-6">
-        <div class="flex bg-slate-100 p-1.5 rounded-2xl">
-            <button onclick="setHistoryTab('training')" id="hist-tab-train" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Training</button>
-            <button onclick="setHistoryTab('nutrition')" id="hist-tab-nut" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all text-slate-400">Food</button>
-            <button onclick="setHistoryTab('body')" id="hist-tab-body" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all text-slate-400">Body</button>
-        </div>
-        <div id="history-list" class="space-y-4"></div>
-    </section>
+    <script>
+        // --- DATA & STATE ---
+        const EXERCISE_DB = [
+            { name: "Barbell Bench Press", focus: ["Full Body", "Upper Body", "Push"], equipment: "barbell", muscles: ["Chest", "Triceps", "Shoulders"] },
+            { name: "Dumbbell Press", focus: ["Full Body", "Upper Body", "Push"], equipment: "dumbbell", muscles: ["Chest", "Triceps"] },
+            { name: "Incline Barbell Press", focus: ["Upper Body", "Push"], equipment: "barbell", muscles: ["Chest", "Shoulders"] },
+            { name: "Pull Ups", focus: ["Full Body", "Upper Body", "Pull"], equipment: "bodyweight", muscles: ["Back", "Biceps"] },
+            { name: "Lat Pulldowns", focus: ["Upper Body", "Pull"], equipment: "cable", muscles: ["Back", "Biceps"] },
+            { name: "Barbell Rows", focus: ["Full Body", "Upper Body", "Pull"], equipment: "barbell", muscles: ["Back", "Biceps"] },
+            { name: "Barbell Squats", focus: ["Full Body", "Lower Body/Legs", "Squat"], equipment: "barbell", muscles: ["Quads", "Glutes"] },
+            { name: "Leg Press", focus: ["Lower Body/Legs", "Squat"], equipment: "machine", muscles: ["Quads"] },
+            { name: "Barbell Deadlift", focus: ["Full Body", "Lower Body/Legs", "Hinge"], equipment: "barbell", muscles: ["Back", "Hamstrings", "Glutes"] },
+            { name: "Romanian Deadlifts", focus: ["Lower Body/Legs", "Hinge"], equipment: "barbell", muscles: ["Hamstrings", "Glutes"] },
+            { name: "Overhead Press", focus: ["Upper Body", "Push"], equipment: "barbell", muscles: ["Shoulders"] },
+            { name: "Lunges", focus: ["Lower Body/Legs", "Squat"], equipment: "dumbbell", muscles: ["Quads", "Glutes"] }
+        ];
 
-</main>
+        const CORE_EXERCISES = ["Plank", "Crunches", "Leg Raises", "Russian Twists", "Deadbugs", "Bicycle Crunches", "Hollow Hold", "Bird Dog"];
+        const MUSCLE_LIST = ["Chest", "Back", "Shoulders", "Quads", "Hamstrings", "Glutes", "Triceps", "Biceps", "Core"];
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 px-6 py-4 flex justify-between items-center z-50">
-    <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item text-slate-300 flex flex-col items-center gap-1 active">
-        <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
-        <span class="text-[8px] font-black uppercase tracking-tighter">Dash</span>
-    </button>
-    <button onclick="switchTab('training')" data-tab="training" class="nav-item text-slate-300 flex flex-col items-center gap-1">
-        <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg"><i data-lucide="dumbbell" class="w-5 h-5"></i></div>
-        <span class="text-[8px] font-black uppercase tracking-tighter">Train</span>
-    </button>
-    <button onclick="switchTab('nutrition')" data-tab="nutrition" class="nav-item text-slate-300 flex flex-col items-center gap-1">
-        <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg"><i data-lucide="apple" class="w-5 h-5"></i></div>
-        <span class="text-[8px] font-black uppercase tracking-tighter">Eat</span>
-    </button>
-    <button onclick="switchTab('history')" data-tab="history" class="nav-item text-slate-300 flex flex-col items-center gap-1">
-        <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg"><i data-lucide="calendar" class="w-5 h-5"></i></div>
-        <span class="text-[8px] font-black uppercase tracking-tighter">Logs</span>
-    </button>
-    <button onclick="switchTab('metrics')" data-tab="metrics" class="nav-item text-slate-300 flex flex-col items-center gap-1">
-        <div class="w-12 h-8 rounded-full flex items-center justify-center nav-bg"><i data-lucide="scale" class="w-5 h-5"></i></div>
-        <span class="text-[8px] font-black uppercase tracking-tighter">Body</span>
-    </button>
-</nav>
+        const TUTORIALS = [
+            { title: "Training Setup", content: "Select your environment (Gym/Home). Choose a focus. If you select 'Specific Muscle', you can pick multiple target areas. Check 'Cardio' or 'Core' to add those finishers to the end of your session." },
+            { title: "Tracking", content: "Inside the workout, log your sets, weight, and reps. For core exercises, you can toggle between Reps/Time and bodyweight modes. We've added a weight input to core so you can track weighted planks or crunches!" },
+            { title: "Meal Builder", content: "In the Nutrition tab, use the 'Make a Meal' button to combine multiple items. Adjust portions (packet/grams), name your creation, and save it to your inventory for one-tap logging." }
+        ];
 
-<script>
-/* ============================================================
-   FITTRACK PRO V10 — Integrated JavaScript
-   ============================================================ */
-"use strict";
-
-window.FitTrack = {
-    version: "10.3.0",
-    state: {
-        user: { 
-            xp: 0, level: 1, tier: "Bronze Athlete", 
-            streak: 0, lastActive: null, calorieGoal: 2000,
-            quizProgress: {
-                beginner: { "Nutrition Core": false, "Training Core": false, "Recovery Core": false, "Nutrition (Further)": false, "Training (Further)": false, "Recovery (Further)": false }
-            }
-        },
-        ui: { activeTab: "dashboard", workoutEnv: "gym" },
-        history: { training: [], nutrition: [], metrics: [] },
-        foodDatabase: [
-            { name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
-            { name: "White Rice (1 cup)", calories: 205, protein: 4, carbs: 45, fat: 0.4 },
-            { name: "Protein Shake", calories: 120, protein: 24, carbs: 3, fat: 1.5 }
-        ],
-        availableBadges: [
-            { id: "first_workout", icon: "activity", title: "Beginner", desc: "Log 1st workout", requirement: () => FitTrack.state.history.training.length >= 1 },
-            { id: "streak_3", icon: "flame", title: "Consistency", desc: "3 Day Streak", requirement: () => FitTrack.state.user.streak >= 3 },
-            { id: "protein_king", icon: "beef", title: "Protein King", desc: "Log 100g protein in a day", requirement: () => {
-                const today = new Date().toDateString();
-                const protein = FitTrack.state.history.nutrition
-                    .filter(n => new Date(n.date).toDateString() === today)
-                    .reduce((a,b) => a + b.protein, 0);
-                return protein >= 100;
-            }},
-            { id: "level_5", icon: "zap", title: "Veteran", desc: "Reach Level 5", requirement: () => FitTrack.state.user.level >= 5 }
-        ],
-        unlockedBadges: [],
-        customExerciseLibrary: [
-            { name: "Bench Press", focus: ["Push"], equip: ["Barbell"] },
-            { name: "Squats", focus: ["Legs"], equip: ["Barbell"] },
-            { name: "Deadlifts", focus: ["Pull", "Legs"], equip: ["Barbell"] },
-            { name: "Overhead Press", focus: ["Push"], equip: ["Barbell"] },
-            { name: "Dumbbell Rows", focus: ["Pull"], equip: ["Dumbbell"] },
-            { name: "Pull-ups", focus: ["Pull"], equip: ["Bodyweight"] },
-            { name: "Push-ups", focus: ["Push"], equip: ["Bodyweight"] }
-        ],
-        quizzes: {
-            beginner: {
-                "Nutrition Core": [
-                    { q: "What is a calorie?", options: ["A unit of energy", "A type of fat", "A vitamin"], correct: 0, explanation: "A calorie is a unit of energy derived from food that fuels biological processes.", reference: "FAO (2003) 'Food energy - methods of analysis and conversion factors', Food and Nutrition Paper 77." },
-                    { q: "Which macronutrient contains 9 kcal per gram?", options: ["Protein", "Carbohydrate", "Fat"], correct: 2, explanation: "Fats are the most energy-dense macronutrient, providing more than double the energy of proteins or carbs.", reference: "Atwater, W.O. (1899) 'The Nutritive Value of Food', Farmer's Bulletin." },
-                    { q: "What is the primary role of protein?", options: ["Quick energy", "Tissue repair and growth", "Insulation"], correct: 1, explanation: "Proteins provide amino acids necessary for the structural repair of muscles and organs.", reference: "Campbell, B. et al. (2007) 'International Society of Sports Nutrition position stand: protein and exercise', JISSN." },
-                    { q: "Which carb is 'complex'?", options: ["Sugar", "Oats", "Honey"], correct: 1, explanation: "Oats contain long-chain polysaccharides that digest slowly, providing sustained energy.", reference: "Slavin, J. (2013) 'Whole grains and human health', Nutrition Research Reviews." },
-                    { q: "Hydration is key for...", options: ["Only sweating", "Nutrient transport", "Making hair grow"], correct: 1, explanation: "Water is the primary medium for transporting nutrients and oxygen to cells.", reference: "Jequier, E. (2010) 'Water as an essential nutrient: the physiological basis of hydration', European Journal of Clinical Nutrition." },
-                    { q: "What is BMR?", options: ["Basic Muscle Rate", "Basal Metabolic Rate", "Body Mass Ratio"], correct: 1, explanation: "BMR is the energy expended while at rest in a neutrally temperate environment.", reference: "Henry, C.J. (2005) 'Basal metabolic rate studies in humans: measurement and development of new equations', Public Health Nutrition." },
-                    { q: "Fiber is important for...", options: ["Muscle building", "Digestive health", "Vision"], correct: 1, explanation: "Fiber assists in bowel regularity and microbiome health.", reference: "Anderson, J.W. et al. (2009) 'Health benefits of dietary fiber', Nutrition Reviews." },
-                    { q: "A 'Caloric Deficit' leads to...", options: ["Weight gain", "Weight loss", "No change"], correct: 1, explanation: "Consuming fewer calories than burned forces the body to use stored energy (fat).", reference: "Strasser, B. (2007) 'Fat loss depends on energy deficit only', Obesity Reviews." },
-                    { q: "Vitamin C is found in high amounts in...", options: ["Steak", "Oranges", "Bread"], correct: 1, explanation: "Citrus fruits are potent sources of ascorbic acid (Vitamin C).", reference: "Carr, A.C. (2017) 'Vitamin C and Immune Function', Nutrients." },
-                    { q: "Trans fats are generally considered...", options: ["Healthy", "Unhealthy", "Essential"], correct: 1, explanation: "Artificial trans fats increase LDL cholesterol and inflammation.", reference: "Mozaffarian, D. (2006) 'Trans Fatty Acids and Cardiovascular Disease', NEJM." },
-                    { q: "What is the Glycemic Index?", options: ["Weight of food", "How food affects blood sugar", "Price of food"], correct: 1, explanation: "GI ranks carbs based on how quickly they raise blood glucose levels.", reference: "Jenkins, D.J. (1981) 'Glycemic index of foods: a physiological basis for carbohydrate exchange', AJCN." },
-                    { q: "Iron is essential for...", options: ["Bone strength", "Oxygen transport", "Skin elasticity"], correct: 1, explanation: "Iron is a key component of hemoglobin in red blood cells.", reference: "Abbaspour, N. (2014) 'Review on iron and its importance for human health', Journal of Research in Medical Sciences." }
-                ],
-                "Nutrition (Further)": [
-                    { q: "Which vitamin is synthesized via sunlight?", options: ["Vitamin A", "Vitamin D", "Vitamin K"], correct: 1, explanation: "UVB rays trigger the synthesis of Vitamin D3 in the skin.", reference: "Holick, M.F. (2007) 'Vitamin D deficiency', NEJM." },
-                    { q: "What is the 'Thermic Effect of Food'?", options: ["Heating food", "Energy used to digest food", "Body heat after exercise"], correct: 1, explanation: "TEF represents the energy cost of processing food for use and storage.", reference: "Westerterp, K.R. (2004) 'Diet induced thermogenesis', Nutrition & Metabolism." },
-                    { q: "Omega-3 fatty acids are mostly found in...", options: ["Chicken", "Fatty fish", "Pasta"], correct: 1, explanation: "Fish like salmon are rich in EPA and DHA omega-3s.", reference: "Swanson, D. (2012) 'Omega-3 Fatty Acids EPA and DHA: Health Benefits Throughout Life', Advances in Nutrition." },
-                    { q: "Magnesium helps with...", options: ["Muscle relaxation", "Teeth whitening", "Hair color"], correct: 0, explanation: "Magnesium is a cofactor in over 300 enzyme systems, including muscle and nerve function.", reference: "Gröber, U. (2015) 'Magnesium in Prevention and Therapy', Nutrients." },
-                    { q: "What is Creatine?", options: ["A steroid", "An amino acid derivative", "A vitamin"], correct: 1, explanation: "Creatine helps regenerate ATP during high-intensity exercise.", reference: "Buford, T.W. (2007) 'ISSN position stand: creatine supplementation and exercise', JISSN." },
-                    { q: "Antioxidants protect against...", options: ["Muscle growth", "Free radicals", "Hydration"], correct: 1, explanation: "Antioxidants neutralize reactive oxygen species that cause cellular damage.", reference: "Lobo, V. (2010) 'Free radicals, antioxidants and functional foods', Pharmacognosy Review." },
-                    { q: "Which is a fat-soluble vitamin?", options: ["C", "B12", "A"], correct: 2, explanation: "Vitamins A, D, E, and K require dietary fat for absorption.", reference: "Albahrani, A.A. (2016) 'Fat-soluble vitamins: clinical aspects and current analytical approaches', Clinical Biochemist Reviews." },
-                    { q: "Satiety refers to...", options: ["Hunger", "Fullness", "Taste"], correct: 1, explanation: "Satiety is the state of feeling satisfied and full after eating.", reference: "Blundell, J.E. (1991) 'Dietary fat and the control of energy intake', AJCN." },
-                    { q: "The primary fuel for high-intensity sprinting is...", options: ["Fat", "Glycogen", "Protein"], correct: 1, explanation: "Anaerobic glycolysis uses stored glycogen for rapid ATP production.", reference: "Baker, J.S. (2010) 'Interaction among Skeletal Muscle Metabolic Energy Systems during Intense Exercise', Journal of Nutrition and Metabolism." },
-                    { q: "Zinc is crucial for...", options: ["Digestion", "Testosterone and immunity", "Bone density"], correct: 1, explanation: "Zinc plays a major role in hormonal health and immune response.", reference: "Prasad, A.S. (2008) 'Zinc in Human Health: Effect of Zinc on Immune Cells', Molecular Medicine." },
-                    { q: "Electrolytes include...", options: ["Sugar and Flour", "Sodium and Potassium", "Iron and Zinc"], correct: 1, explanation: "Electrolytes carry electrical charges necessary for muscle contraction.", reference: "Sawka, M.N. (2007) 'American College of Sports Medicine position stand: Exercise and fluid replacement', MSSE." },
-                    { q: "Intermittent Fasting primarily affects...", options: ["Insulin sensitivity", "Muscle fiber type", "Maximum heart rate"], correct: 0, explanation: "Fasting windows can help regulate blood glucose and insulin levels.", reference: "Tinsley, G.M. (2015) 'Effects of intermittent fasting on body composition and clinical health markers', Nutrition Reviews." },
-                    { q: "Leucine is unique because it...", options: ["Is a fat", "Triggers muscle protein synthesis", "Is a sugar"], correct: 1, explanation: "Leucine directly activates the mTOR pathway for muscle growth.", reference: "Norton, L.E. (2006) 'Leucine regulates translation initiation of protein synthesis in skeletal muscle', Journal of Nutrition." }
-                ],
-                "Training Core": [
-                    { q: "What is Progressive Overload?", options: ["Overtraining", "Gradual increase in stress", "Doing the same reps"], correct: 1, explanation: "Continuous improvement requires increasing weight, frequency, or volume over time.", reference: "Kraemer, W.J. (2004) 'Fundamentals of resistance training', MSSE." },
-                    { q: "Hypertrophy is...", options: ["Fat gain", "Muscle growth", "Heart rate"], correct: 1, explanation: "Hypertrophy is the enlargement of muscle fibers.", reference: "Schoenfeld, B.J. (2010) 'The mechanisms of muscle hypertrophy', JSCR." },
-                    { q: "A 'Compound Exercise' involves...", options: ["One joint", "Multiple joints", "No joints"], correct: 1, explanation: "Exercises like squats use multiple joints and muscle groups simultaneously.", reference: "Gentil, P. (2015) 'A Review of the Acute Effects and Long-Term Adaptations of Single- and Multi-Joint Exercises', Sports Medicine." },
-                    { q: "RPE stands for...", options: ["Rate of Perceived Exertion", "Rest Per Exercise", "Repeat Power Effort"], correct: 0, explanation: "RPE measures how hard an individual feels they are working.", reference: "Borg, G. (1998) 'Borg's Perceived Exertion and Pain Scales', Human Kinetics." },
-                    { q: "What is the 'Eccentric' phase?", options: ["Lifting", "Lowering", "Holding"], correct: 1, explanation: "The eccentric phase is the controlled lengthening of the muscle under tension.", reference: "Douglas, J. (2017) 'Chronic Adaptations to Eccentric Training: A Systematic Review', Sports Medicine." },
-                    { q: "Which is a 'Pull' exercise?", options: ["Pushup", "Row", "Shoulder Press"], correct: 1, explanation: "Rows involve pulling resistance toward the body.", reference: "Haff, G.G. (2015) 'Essentials of Strength Training and Conditioning', NSCA." },
-                    { q: "Volume is calculated as...", options: ["Sets x Reps", "Weight x Reps", "Sets x Reps x Weight"], correct: 2, explanation: "Total volume load accounts for the total work done.", reference: "Schoenfeld, B.J. (2017) 'Resistance Training Volume Enhances Muscle Hypertrophy', MSSE." },
-                    { q: "What is 'Rest Interval'?", options: ["Time between workouts", "Time between sets", "Sleep time"], correct: 1, explanation: "Rest intervals allow for ATP and phosphocreatine resynthesis.", reference: "De Salles, B.F. (2009) 'Rest interval between sets in strength training', Sports Medicine." },
-                    { q: "Concentric means...", options: ["Shortening", "Lengthening", "Staying still"], correct: 0, explanation: "Concentric contraction happens when the muscle shortens while producing force.", reference: "Knudson, D. (2007) 'Fundamentals of Biomechanics', Springer." },
-                    { q: "Isometrics involve...", options: ["Explosive movement", "No visible movement", "Slow lowering"], correct: 1, explanation: "Isometric exercises involve muscle tension without changing muscle length.", reference: "Oranchuk, D.J. (2019) 'Isometric training and long-term adaptations', Sports Medicine." },
-                    { q: "What is 'Form'?", options: ["Clothing", "Technique", "A document"], correct: 1, explanation: "Technique/Form ensures safety and optimal muscle recruitment.", reference: "Everett, G. (2009) 'Olympic Weightlifting', Catalyst Athletics." },
-                    { q: "Cardio improves...", options: ["Strength", "Aerobic capacity", "Flexibility"], correct: 1, explanation: "Cardiovascular training enhances the efficiency of the heart and lungs.", reference: "Patel, H. (2017) 'Aerobic vs anaerobic exercise training effects on the cardiovascular system', World Journal of Cardiology." }
-                ],
-                "Training (Further)": [
-                    { q: "What are Type II muscle fibers?", options: ["Slow twitch", "Fast twitch", "Cardiac"], correct: 1, explanation: "Type II fibers are used for explosive, powerful movements.", reference: "Wilson, J.M. (2012) 'The effects of endurance, strength, and power training on muscle fiber type shifting', JSCR." },
-                    { q: "The 'SAID' principle stands for...", options: ["Specific Adaptation to Imposed Demands", "Safety Always In Diet", "Strength And Intense Drills"], correct: 0, explanation: "The body adapts specifically to the type of stress placed upon it.", reference: "Sale, D. (1981) 'Specificity of strength training: a review', Canadian Journal of Applied Sport Sciences." },
-                    { q: "What is 'Deloading'?", options: ["Quitting gym", "Planned reduction in volume/intensity", "Lifting max weight"], correct: 1, explanation: "Deloads allow systemic fatigue to dissipate while maintaining skill.", reference: "Pritchard, H.J. (2015) 'Tapering and Peaking for Maximum Strength', Strategic Strength." },
-                    { q: "Muscle Protein Synthesis (MPS) is triggered by...", options: ["Fasting", "Resistance training and protein", "Sleeping only"], correct: 1, explanation: "The combination of mechanical tension and amino acids maximizes MPS.", reference: "Biolo, G. (1997) 'An abundant supply of amino acids enhances the metabolic effect of exercise on muscle protein', AJCP." },
-                    { q: "What is 'Supercompensation'?", options: ["Overtraining", "The post-recovery increase in performance", "Buying supplements"], correct: 1, explanation: "After recovery from stress, the body adapts beyond its previous baseline.", reference: "Zatsiorsky, V.M. (2006) 'Science and Practice of Strength Training', Human Kinetics." },
-                    { q: "EMG measures...", options: ["Heart rate", "Muscle electrical activity", "Bone density"], correct: 1, explanation: "Electromyography tracks how much a muscle is 'firing' during a movement.", reference: "De Luca, C.J. (1997) 'The Use of Surface Electromyography in Biomechanics', Journal of Applied Biomechanics." },
-                    { q: "The Valsalva Maneuver helps...", options: ["Running", "Intra-abdominal pressure for lifting", "Flexibility"], correct: 1, explanation: "Holding breath against a closed airway stabilizes the spine during heavy lifts.", reference: "Hackett, D.A. (2013) 'The Valsalva maneuver during resistance training', Sports Medicine." },
-                    { q: "What is 'Tempo' training?", options: ["Music speed", "Controlling the speed of reps", "Total time in gym"], correct: 1, explanation: "Controlling rep speed alters time under tension and metabolic stress.", reference: "Wilk, M. (2018) 'The influence of movement tempo on hypertrophy', Journal of Human Kinetics." },
-                    { q: "Plyometrics focus on...", options: ["Static holding", "The stretch-shortening cycle", "Endurance"], correct: 1, explanation: "Plyometrics use explosive movements to improve power.", reference: "Davies, G. (2015) 'Current concepts of plyometric exercise', International Journal of Sports Physical Therapy." },
-                    { q: "Antagonist muscles...", options: ["Work together", "Oppose the movement", "Do nothing"], correct: 1, explanation: "An antagonist muscle relaxes while the agonist (prime mover) contracts.", reference: "Tortora, G.J. (2014) 'Principles of Anatomy and Physiology', Wiley." },
-                    { q: "What is 'Overreaching'?", options: ["A stretch", "Short-term excess training", "Winning"], correct: 1, explanation: "Functional overreaching is a temporary dip in performance before supercompensation.", reference: "Halson, S.L. (2004) 'Does overtraining exist? An analysis of overreaching and overtraining', Sports Medicine." },
-                    { q: "Biomechanics is the study of...", options: ["Biology of plants", "Mechanical laws of movement", "Gym equipment"], correct: 1, explanation: "Biomechanics applies physics to biological systems to optimize movement.", reference: "McGinnis, P.M. (2013) 'Biomechanics of Sport and Exercise', Human Kinetics." },
-                    { q: "What is an 'Accommodation'?", options: ["A hotel", "Plateauing due to lack of variation", "Lifting heavier"], correct: 1, explanation: "The Law of Accommodation states that the response to a constant stimulus decreases over time.", reference: "Siff, M. (2003) 'Supertraining', Supertraining Institute." }
-                ],
-                "Recovery Core": [
-                    { q: "How much sleep is recommended for athletes?", options: ["4-5 hours", "7-9 hours", "12+ hours"], correct: 1, explanation: "Optimal sleep supports hormonal balance and tissue repair.", reference: "Bird, S.P. (2013) 'Sleep, recovery, and athletic performance', Strength & Conditioning Journal." },
-                    { q: "DOMS stands for...", options: ["Direct Onset Muscle Soreness", "Delayed Onset Muscle Soreness", "Daily Onset Muscle Soreness"], correct: 1, explanation: "DOMS usually peaks 24-48 hours after unfamiliar eccentric exercise.", reference: "Cheung, K. (2003) 'Delayed onset muscle soreness : treatment strategies and performance factors', Sports Medicine." },
-                    { q: "The primary purpose of a cool-down is...", options: ["Building muscle", "Gradual return to resting state", "Wasting time"], correct: 1, explanation: "Cool-downs help clear metabolic byproducts and prevent blood pooling.", reference: "Takahashi, J. (2002) 'Effect of low-intensity exercise on recovery', Journal of Sports Sciences." },
-                    { q: "What is 'Passive Recovery'?", options: ["Walking", "Total rest/stillness", "Lifting light"], correct: 1, explanation: "Passive recovery involves no activity, allowing the CNS to rest.", reference: "Dupuy, O. (2018) 'An Evidence-Based Approach for Choosing Post-exercise Recovery Techniques', Frontiers in Physiology." },
-                    { q: "What is the role of Cortisol?", options: ["Builds muscle", "Stress hormone that breaks down tissue", "Makes you sleep"], correct: 1, explanation: "Chronically high cortisol can inhibit recovery and muscle growth.", reference: "Hill, E.E. (2008) 'Exercise and circulating cortisol levels: the intensity threshold effect', Journal of Endocrinological Investigation." },
-                    { q: "Hydration impacts recovery by...", options: ["Making you heavy", "Aiding nutrient delivery and waste removal", "Cooling the skin only"], correct: 1, explanation: "Fluid balance is critical for cellular metabolic processes post-exercise.", reference: "Casa, D.J. (2005) 'Influence of hydration on physiological function and performance', Applied Physiology." },
-                    { q: "Active recovery should be...", options: ["High intensity", "Low intensity", "Max effort"], correct: 1, explanation: "Low-intensity movement increases blood flow without adding stress.", reference: "Monedero, J. (2000) 'Effect of recovery interventions on lactate removal', IJSM." },
-                    { q: "Foam rolling is a form of...", options: ["Strength training", "Self-myofascial release", "Cardio"], correct: 1, explanation: "Rolling can help reduce perceived muscle soreness and improve range of motion.", reference: "Behm, D.G. (2013) 'Acute effects of self-myofascial release', JSCR." },
-                    { q: "Protein before bed can...", options: ["Make you fat", "Support overnight muscle protein synthesis", "Prevent sleep"], correct: 1, explanation: "Casein protein provides a slow release of amino acids during sleep.", reference: "Res, P.T. (2012) 'Protein ingestion before sleep improves post-exercise overnight recovery', MSSE." },
-                    { q: "What is 'Mental Fatigue'?", options: ["Muscle tiredness", "Cognitive exhaustion affecting performance", "Forgetting weights"], correct: 1, explanation: "Psychological stress can impair physical recovery and focus.", reference: "Marcora, S.M. (2009) 'Mental fatigue impairs physical performance in humans', Journal of Applied Physiology." },
-                    { q: "Contrast baths involve...", options: ["Hot and cold water", "Salt and pepper", "Mud and clay"], correct: 0, explanation: "Alternating temperatures may stimulate blood flow and reduce swelling.", reference: "Higgins, T.R. (2017) 'Effects of contrast water therapy on recovery', JSCR." },
-                    { q: "Inflammation post-exercise is...", options: ["Always bad", "A necessary signal for adaptation", "Only for old people"], correct: 1, explanation: "Acute inflammation triggers the signaling cascades for repair and growth.", reference: "Peake, J.M. (2017) 'The role of inflammation in skeletal muscle regeneration', Frontiers in Physiology." }
-                ],
-                "Recovery (Further)": [
-                    { q: "What is HRV?", options: ["Heart Rate Volume", "Heart Rate Variability", "High Resistance Velocity"], correct: 1, explanation: "HRV measures the variation in time between heartbeats, reflecting autonomic nervous system status.", reference: "Plews, D.J. (2013) 'Training adaptation and heart rate variability in elite endurance athletes', Sports Medicine." },
-                    { q: "Adaptogens are substances that...", options: ["Increase fat", "Help the body manage stress", "Build bone"], correct: 1, explanation: "Herbs like Ashwagandha can help modulate the stress response.", reference: "Panossian, A. (2010) 'Effects of Adaptogens on the Central Nervous System', Pharmaceuticals." },
-                    { q: "Alcohol consumption post-exercise...", options: ["Speeds recovery", "Impairs muscle protein synthesis", "Has no effect"], correct: 1, explanation: "Alcohol interferes with the signaling pathways for muscle repair.", reference: "Parr, E.B. (2014) 'Alcohol ingestion impairs maximal post-exercise rates of myofibrillar protein synthesis', PLOS ONE." },
-                    { q: "Parasympathetic nervous system is the...", options: ["Fight or flight", "Rest and digest", "Muscle mover"], correct: 1, explanation: "Recovery occurs primarily when the parasympathetic system is dominant.", reference: "McCorry, L.K. (2007) 'Physiology of the Autonomic Nervous System', AJPE." },
-                    { q: "Cryotherapy (Cold) primarily works by...", options: ["Burning fat", "Vasoconstriction and reduced metabolic activity", "Making you stronger"], correct: 1, explanation: "Cold reduces blood flow and secondary tissue damage after trauma.", reference: "Bleakley, C.M. (2012) 'Whole-body cryotherapy: empirical evidence and theoretical perspectives', Open Access Journal of Sports Medicine." },
-                    { q: "Compression garments help by...", options: ["Limiting growth", "Improving venous return and reducing oscillation", "Looking cool"], correct: 1, explanation: "Squeezing the limbs helps return blood to the heart and reduces muscle vibration.", reference: "Hill, J. (2014) 'Compression garments and recovery from exercise-induced muscle damage', BJSM." },
-                    { q: "Which phase of sleep is most for physical repair?", options: ["REM", "Deep Sleep (N3)", "Light Sleep (N1)"], correct: 1, explanation: "Growth hormone is released in high pulses during Deep Sleep.", reference: "Dattilo, M. (2011) 'Sleep and muscle recovery', Medical Hypotheses." },
-                    { q: "Oxidative stress is caused by...", options: ["Oxygen in water", "Reactive Oxygen Species (ROS)", "Heavy lifting only"], correct: 1, explanation: "High intensity leads to ROS production which requires antioxidant balance.", reference: "Powers, S.K. (2008) 'Reactive oxygen species and skeletal muscle', American Journal of Physiology." },
-                    { q: "Static stretching is best done...", options: ["Before a workout", "After a workout", "Never"], correct: 1, explanation: "Post-workout stretching can help return muscles to resting length and relax the CNS.", reference: "Page, P. (2012) 'Current concepts in muscle stretching', IJSPT." },
-                    { q: "Cherry juice may help recovery due to...", options: ["Sugar content", "Anthocyanins (Anti-inflammatory)", "Color"], correct: 1, explanation: "Tart cherries contain compounds that reduce pain and inflammation.", reference: "Connolly, D.A. (2006) 'Efficacy of a tart cherry juice blend in preventing muscle damage', BJSM." },
-                    { q: "Central Fatigue refers to...", options: ["Muscle failure", "The brain reducing motor drive", "Stomach ache"], correct: 1, explanation: "The CNS reduces output to protect the body from damage.", reference: "Gandevia, S.C. (2001) 'Spinal and supraspinal factors in human muscle fatigue', Physiological Reviews." },
-                    { q: "Joint health is supported by...", options: ["Collagen and Vitamin C", "Sugar and Salt", "Bread"], correct: 0, explanation: "Collagen provides structural support for cartilage and tendons.", reference: "Shaw, G. (2017) 'Vitamin C-enriched gelatin supplementation before intermittent activity augments collagen synthesis', AJCN." },
-                    { q: "The 'Anabolic Window' theory states...", options: ["You must eat within 30 mins", "Nutrition timing is irrelevant", "Only fats matter"], correct: 0, explanation: "While exaggerated, immediate post-workout nutrients support recovery signals.", reference: "Aragon, A.A. (2013) 'Nutrient timing revisited', JISSN." }
-                ]
-            }
-        }
-    }
-};
-
-let html5QrCode = null;
-
-// Storage Logic
-FitTrack.storage = {
-    key: "fittrack_v10_data",
-    save() { localStorage.setItem(this.key, JSON.stringify(FitTrack.state)); },
-    load() {
-        const data = localStorage.getItem(this.key);
-        if (data) {
-            const saved = JSON.parse(data);
-            FitTrack.state.user = { ...FitTrack.state.user, ...saved.user };
-            FitTrack.state.history = { ...FitTrack.state.history, ...saved.history };
-            if(saved.foodDatabase) FitTrack.state.foodDatabase = saved.foodDatabase;
-            if(saved.customExerciseLibrary) FitTrack.state.customExerciseLibrary = saved.customExerciseLibrary;
-        }
-        this.checkStreak();
-    },
-    checkStreak() {
-        const today = new Date().toDateString();
-        const last = FitTrack.state.user.lastActive ? new Date(FitTrack.state.user.lastActive).toDateString() : null;
-        if (last === today) return;
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        if (last === yesterday.toDateString()) {
-            FitTrack.state.user.streak++;
-            FitTrack.xp.add(20 * FitTrack.state.user.streak, "Streak Bonus!");
-        } else {
-            FitTrack.state.user.streak = 1;
-        }
-        FitTrack.state.user.lastActive = new Date().toISOString();
-        this.save();
-    }
-};
-
-// UI Logic
-window.switchTab = function(tabId) {
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-    document.getElementById(tabId)?.classList.add("active");
-    document.querySelectorAll(".nav-item").forEach(n => {
-        n.classList.toggle("active", n.getAttribute("data-tab") === tabId);
-    });
-    FitTrack.state.ui.activeTab = tabId;
-    if (tabId === 'dashboard') updateGamificationUI();
-    if (tabId === 'nutrition') renderInventory();
-    if (tabId === 'training') renderExerciseLibrary();
-    if (tabId === 'history') setHistoryTab('training');
-    FitTrack.storage.save();
-};
-
-window.setNutritionTab = function(tab) {
-    document.getElementById("nut-view-log").classList.toggle("hidden", tab !== 'log');
-    document.getElementById("nut-view-db").classList.toggle("hidden", tab !== 'database');
-    document.getElementById("nut-tab-log").classList.toggle("bg-white", tab === 'log');
-    document.getElementById("nut-tab-db").classList.toggle("bg-white", tab === 'database');
-    if(tab === 'database') renderInventory();
-};
-
-window.setTrainingView = function(view) {
-    document.getElementById("workout-setup-view").classList.toggle("hidden", view !== 'setup');
-    document.getElementById("workout-library-view").classList.toggle("hidden", view !== 'library');
-    document.getElementById("train-tab-setup").classList.toggle("bg-white", view === 'setup');
-    document.getElementById("train-tab-library").classList.toggle("bg-white", view === 'library');
-    if(view === 'library') renderExerciseLibrary();
-};
-
-window.setWorkoutEnv = function(env) {
-    FitTrack.state.ui.workoutEnv = env;
-    document.getElementById('env-tab-gym').classList.toggle('bg-white', env === 'gym');
-    document.getElementById('env-tab-home').classList.toggle('bg-white', env === 'home');
-};
-
-function isLevelComplete(lvl) {
-    const prog = FitTrack.state.user.quizProgress[lvl];
-    if (!prog) return false;
-    return Object.values(prog).every(v => v === true);
-}
-
-// Quiz / Education Logic
-window.openEducationQuiz = function() {
-    const modal = document.getElementById('generic-modal-overlay');
-    const content = document.getElementById('modal-content');
-    const title = document.getElementById('modal-title');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-
-    title.innerText = "Fitness Academy";
-    content.innerHTML = `
-        <p class="text-[10px] font-black uppercase text-slate-400 mb-2">Complete all topics to advance</p>
-        <div class="grid grid-cols-1 gap-3">
-            <button onclick="startLevelSelection('beginner')" class="p-5 bg-indigo-50 text-indigo-600 rounded-3xl font-bold flex justify-between items-center">
-                <div class="text-left">
-                    <span class="block text-sm uppercase tracking-wider">Education Curriculum</span>
-                    <span class="text-[9px] opacity-60">Complete 25 questions per subject</span>
-                </div>
-                ${isLevelComplete('beginner') ? '<i data-lucide="check-circle" class="w-5 h-5"></i>' : '<i data-lucide="play" class="w-4 h-4"></i>'}
-            </button>
-        </div>
-    `;
-    confirmBtn.classList.add('hidden');
-    modal.style.display = "flex";
-    lucide.replace();
-};
-
-window.startLevelSelection = function(level) {
-    const content = document.getElementById('modal-content');
-    const topics = Object.keys(FitTrack.state.quizzes[level] || {});
-    
-    content.innerHTML = `
-        <button onclick="openEducationQuiz()" class="text-[10px] font-black text-indigo-600 mb-4 flex items-center gap-1 uppercase">
-            <i data-lucide="arrow-left" class="w-3 h-3"></i> Back
-        </button>
-        <h4 class="font-black text-slate-800 text-lg mb-4">Subject Selection</h4>
-        <div class="grid grid-cols-1 gap-2">
-            ${topics.map(topic => {
-                const isPassed = FitTrack.state.user.quizProgress[level][topic];
-                return `
-                <button onclick="startQuiz('${level}', '${topic}')" class="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl font-bold text-sm flex justify-between items-center">
-                    <span>${topic}</span>
-                    ${isPassed ? '<i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>' : '<i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>'}
-                </button>
-                `;
-            }).join('')}
-        </div>
-    `;
-    lucide.replace();
-};
-
-window.startQuiz = function(level, topic) {
-    const questions = FitTrack.state.quizzes[level][topic];
-    const content = document.getElementById('modal-content');
-    let currentIdx = 0;
-    let userAnswers = new Array(questions.length).fill(null);
-
-    const showQuestion = () => {
-        const q = questions[currentIdx];
-        const selected = userAnswers[currentIdx];
+        let timerInterval;
+        let activeWorkoutStart = null;
+        let currentPhotoType = null;
+        let html5QrCode;
+        let scannerMode = 'db'; // 'db' or 'meal'
         
-        content.innerHTML = `
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-[10px] font-black uppercase text-slate-400">${topic}</p>
-                <p class="text-[10px] font-black text-indigo-600">Q ${currentIdx+1}/${questions.length}</p>
-            </div>
-            <h4 class="font-bold text-slate-800 text-lg leading-tight mb-6">${q.q}</h4>
-            <div id="quiz-options-container" class="space-y-3">
-                ${q.options.map((opt, i) => `
-                    <button onclick="recordAnswer(${i})" class="quiz-opt-btn w-full text-left p-5 ${selected === i ? 'bg-indigo-600 text-white' : 'bg-slate-50 hover:bg-white'} border border-transparent rounded-2xl font-bold text-sm transition-all">
-                        ${opt}
-                    </button>
-                `).join('')}
-            </div>
+        let state = {
+            activeTab: 'dashboard', historyTab: 'training', nutritionTab: 'log', metricsTab: 'checkin',
+            workoutEnv: 'gym', viewDate: new Date().toISOString().split('T')[0],
+            goals: { calories: 2500, water: 2500 },
+            equipment: { 
+                gym: { barbell: true, dumbbell: true, kettlebell: true, cable: true, machine: true, bodyweight: true }, 
+                home: { dumbbell: false, kettlebell: false, bodyweight: true, bands: false } 
+            },
+            dailyMeals: [], waterLogs: {}, workoutHistory: [], metricsHistory: [], customFoodDb: [],
+            currentPhotos: { front: null, side: null, back: null },
+            selectedMuscles: [],
+            nutritionalArchive: [],
+            mission: "",
+            wins: [],
+            addons: { steps: false, habits: false },
+            stepGoal: 10000,
+            dailySteps: 0,
+            habitList: [],
+            habitsCompleted: {}
+        };
+
+        let portionSelection = { item: null, mode: 'packet' };
+        let mealBuilderItems = [];
+
+        window.onload = () => {
+            const saved = localStorage.getItem('fittrack_combined_v8');
+            if (saved) state = { ...state, ...JSON.parse(saved) };
+            document.getElementById('status-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('set-cal-goal').value = state.goals.calories;
+            document.getElementById('config-cals-goal').value = state.goals.calories;
+            document.getElementById('workout-date-input').value = state.viewDate;
+            initEquipmentSettings();
+            renderDashboard();
+            renderCustomDb();
+            renderMuscleSelection();
+            document.getElementById('photo-input').addEventListener('change', handlePhotoUpload);
+            lucide.createIcons();
+
+            // Added from first code: Sync UI with stored settings
+            document.getElementById('toggle-steps').checked = state.addons.steps;
+            document.getElementById('toggle-habits').checked = state.addons.habits;
+            document.getElementById('config-step-goal').value = state.stepGoal;
+            document.getElementById('config-habits-list').value = state.habitList.join(', ');
+            document.getElementById('settings-mission').value = state.mission;
+            document.getElementById('settings-wins').value = state.wins.join('\n');
             
-            <div class="grid grid-cols-2 gap-3 mt-8">
-                <button onclick="quizNav(-1)" class="p-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs uppercase" ${currentIdx === 0 ? 'disabled' : ''}>Previous</button>
-                <button onclick="quizNav(1)" class="p-4 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase">${currentIdx === questions.length - 1 ? 'Finish' : 'Next'}</button>
-            </div>
+            updateAddonUI();
+        };
 
-            <div class="w-full h-1 bg-slate-100 rounded-full mt-8 overflow-hidden">
-                <div class="h-full bg-indigo-500 transition-all" style="width: ${((currentIdx + 1)/questions.length)*100}%"></div>
-            </div>
-        `;
-    };
+        function saveState() { localStorage.setItem('fittrack_combined_v8', JSON.stringify(state)); }
 
-    window.recordAnswer = (idx) => {
-        userAnswers[currentIdx] = idx;
-        showQuestion();
-    };
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                const icon = btn.querySelector('.nav-bg');
+                const isMatch = btn.getAttribute('data-tab') === tabId;
+                btn.className = `nav-item flex flex-col items-center gap-1.5 ${isMatch ? 'text-indigo-600' : 'text-slate-300'}`;
+                icon.className = `w-12 h-8 rounded-full flex items-center justify-center nav-bg ${isMatch ? 'bg-indigo-50' : ''}`;
+            });
+            if (tabId === 'dashboard') renderDashboard();
+            if (tabId === 'history') renderHistory();
+            if (tabId === 'nutrition') { renderDailyLog(); renderCustomDb(); }
+            if (tabId === 'metrics') renderMetrics();
+            lucide.createIcons();
+        }
 
-    window.quizNav = (dir) => {
-        if (dir === 1 && currentIdx === questions.length - 1) {
-            if(userAnswers.includes(null)) {
-                alert("Please answer all questions before finishing.");
+        function openTutorial() {
+            const list = document.getElementById('tutorial-list');
+            list.innerHTML = TUTORIALS.map(t => `<div class="p-4 bg-slate-50 rounded-2xl mb-4"><h4 class="font-black text-indigo-600 text-sm mb-2 uppercase tracking-tight">\( {t.title}</h4><p class="text-xs text-slate-600 leading-relaxed"> \){t.content}</p></div>`).join('');
+            document.getElementById('tutorial-modal').style.display = 'flex';
+        }
+        function closeTutorial() { document.getElementById('tutorial-modal').style.display = 'none'; }
+
+        // --- MEAL BUILDER LOGIC ---
+        function openMealModal() {
+            document.getElementById('meal-modal').style.display = 'flex';
+            mealBuilderItems = [];
+            renderMealBuilder();
+            lucide.createIcons();
+        }
+
+        function closeMealModal() {
+            document.getElementById('meal-modal').style.display = 'none';
+        }
+
+        function handleMealSearch(val) {
+            const results = document.getElementById('meal-search-results');
+            if (!val) { results.classList.add('hidden'); return; }
+            const filtered = state.customFoodDb.filter(f => f.name.toLowerCase().includes(val.toLowerCase()));
+            results.innerHTML = filtered.map(item => `
+                <div class="p-4 border-b hover:bg-slate-50 cursor-pointer flex justify-between items-center" onclick="addIngredientToMeal('${item.name}', ${item.calories}, ${item.protein})">
+                    <div><b class="text-[11px] font-bold">\( {item.name}</b><br><small class="text-slate-400 text-[9px]"> \){item.calories} Kcal / ${item.protein}g P</small></div>
+                    <i data-lucide="plus" class="w-4 h-4 text-indigo-500"></i>
+                </div>
+            `).join('');
+            results.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function addIngredientToMeal(name, cals, prot) {
+            const item = { id: Date.now() + Math.random(), name, baseCals: cals, baseProt: prot, qty: 1, mode: 'packet' };
+            mealBuilderItems.push(item);
+            document.getElementById('meal-item-search').value = '';
+            document.getElementById('meal-search-results').classList.add('hidden');
+            renderMealBuilder();
+        }
+
+        function renderMealBuilder() {
+            const list = document.getElementById('meal-builder-list');
+            const totalsDiv = document.getElementById('meal-totals');
+            if (mealBuilderItems.length === 0) {
+                list.innerHTML = `<p class="text-[10px] text-slate-400 text-center py-8 italic">Search and add items to create a meal</p>`;
+                totalsDiv.classList.add('hidden');
                 return;
             }
-            finishQuizReview(level, topic, questions, userAnswers);
-        } else {
-            currentIdx += dir;
-            showQuestion();
-        }
-    };
-
-    showQuestion();
-};
-
-function finishQuizReview(level, topic, questions, userAnswers) {
-    const content = document.getElementById('modal-content');
-    let correctCount = 0;
-    
-    questions.forEach((q, i) => {
-        if(userAnswers[i] === q.correct) correctCount++;
-    });
-
-    const percentage = (correctCount / questions.length) * 100;
-    const passed = percentage >= 80; // Requirement slightly adjusted for difficulty
-
-    if (passed) FitTrack.state.user.quizProgress[level][topic] = true;
-    FitTrack.storage.save();
-
-    let bibliography = questions.map(q => q.reference).filter(r => r);
-
-    content.innerHTML = `
-        <div class="text-center py-6 border-b border-slate-100 mb-6">
-            <h4 class="font-black text-slate-800 text-xl mb-1">${passed ? 'Subject Passed!' : 'Requires Review'}</h4>
-            <p class="text-sm text-slate-500">Score: <b>${Math.round(percentage)}%</b> (${correctCount}/${questions.length})</p>
-        </div>
-
-        <div class="space-y-8">
-            ${questions.map((q, i) => `
-                <div class="p-4 rounded-3xl ${userAnswers[i] === q.correct ? 'bg-emerald-50/50' : 'bg-red-50/50'} border border-slate-100">
-                    <p class="text-[9px] font-black uppercase text-slate-400 mb-2">Question ${i+1}</p>
-                    <h5 class="font-bold text-slate-800 mb-4 text-sm">${q.q}</h5>
-                    <div class="space-y-2 mb-4">
-                        <div class="p-3 rounded-xl bg-white text-xs ${userAnswers[i] === q.correct ? 'text-emerald-600 border border-emerald-100' : 'text-red-500 border border-red-100'}">
-                            <b>Your Answer:</b> ${q.options[userAnswers[i]]}
+            totalsDiv.classList.remove('hidden');
+            
+            list.innerHTML = mealBuilderItems.map(item => `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
+                    <div class="flex-1">
+                        <div class="text-[11px] font-bold text-slate-800">${item.name}</div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <input type="number" value="\( {item.qty}" step="0.1" onchange="updateIngredientQty( \){item.id}, this.value)" class="w-12 bg-white border border-slate-200 rounded text-[10px] font-bold text-center p-1">
+                            <select onchange="updateIngredientMode(${item.id}, this.value)" class="bg-transparent text-[9px] font-black uppercase text-indigo-500 outline-none">
+                                <option value="packet" ${item.mode === 'packet' ? 'selected' : ''}>Unit</option>
+                                <option value="grams" ${item.mode === 'grams' ? 'selected' : ''}>Grams</option>
+                            </select>
                         </div>
-                        ${userAnswers[i] !== q.correct ? `
-                            <div class="p-3 rounded-xl bg-white text-xs text-emerald-600 border border-emerald-100">
-                                <b>Correct Answer:</b> ${q.options[q.correct]}
-                            </div>
-                        ` : ''}
                     </div>
-                    <div class="bg-white/50 p-4 rounded-2xl">
-                        <p class="text-[10px] font-black uppercase text-indigo-600 mb-1">Scientific Detail</p>
-                        <p class="text-xs text-slate-600 leading-relaxed">${q.explanation}</p>
-                        <p class="mt-3 text-[8px] text-slate-400 italic font-medium">Ref: ${q.reference}</p>
-                    </div>
+                    <button onclick="removeIngredient(${item.id})" class="text-slate-300 hover:text-red-400 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
-            `).join('')}
-        </div>
-
-        <div class="mt-10 pt-6 border-t border-slate-100">
-            <h6 class="text-[10px] font-black uppercase text-slate-400 mb-4">Bibliography (Harvard System)</h6>
-            <ul class="space-y-2">
-                ${[...new Set(bibliography)].map(ref => `<li class="text-[9px] text-slate-500 leading-tight">${ref}</li>`).join('')}
-            </ul>
-        </div>
-
-        <div class="sticky bottom-0 bg-white/80 backdrop-blur-md pt-4 pb-2 mt-8">
-            <button onclick="startLevelSelection('${level}')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest">Back to Menu</button>
-        </div>
-    `;
-    lucide.replace();
-}
-
-// Training Logic & Presets
-const workoutPresets = {
-    gym: {
-        "Full Body": [{name: "Bench Press", sets: 3, reps: 8}, {name: "Leg Press", sets: 3, reps: 10}, {name: "Lat Pulldowns", sets: 3, reps: 12}, {name: "Shoulder Press", sets: 3, reps: 10}],
-        "Push": [{name: "Incline DB Press", sets: 4, reps: 10}, {name: "Cable Flyes", sets: 3, reps: 15}, {name: "Tricep Pushdowns", sets: 3, reps: 12}, {name: "Lateral Raises", sets: 4, reps: 15}],
-        "Pull": [{name: "Deadlifts", sets: 3, reps: 5}, {name: "Bent Over Rows", sets: 4, reps: 10}, {name: "Bicep Curls", sets: 3, reps: 12}, {name: "Face Pulls", sets: 3, reps: 15}],
-        "Legs": [{name: "Barbell Squats", sets: 4, reps: 8}, {name: "Leg Extensions", sets: 3, reps: 12}, {name: "Hamstring Curls", sets: 3, reps: 12}, {name: "Calf Raises", sets: 4, reps: 15}]
-    },
-    home: {
-        "Full Body": [{name: "Pushups", sets: 3, reps: 15}, {name: "Bodyweight Squats", sets: 3, reps: 20}, {name: "Burpees", sets: 3, reps: 10}, {name: "Plank", sets: 3, reps: 45}],
-        "Push": [{name: "Diamond Pushups", sets: 4, reps: 12}, {name: "Pike Pushups", sets: 3, reps: 10}, {name: "Chair Dips", sets: 3, reps: 12}],
-        "Pull": [{name: "Doorway Rows", sets: 4, reps: 15}, {name: "Superman Lifts", sets: 3, reps: 12}, {name: "Reverse Snow Angels", sets: 3, reps: 15}],
-        "Legs": [{name: "Lunges", sets: 3, reps: 12}, {name: "Glute Bridges", sets: 4, reps: 20}, {name: "Wall Sit", sets: 3, reps: 30}]
-    }
-};
-
-FitTrack.training = {
-    active: false,
-    exercises: [],
-    addExercise(preset = {}) {
-        this.exercises.push({ name: preset.name || "", sets: preset.sets || 3, reps: preset.reps || 10, weight: preset.weight || 0 });
-        this.render();
-    },
-    render() {
-        const container = document.getElementById("exercise-list");
-        container.innerHTML = this.exercises.map((ex, i) => `
-            <div class="glass-card p-4 rounded-2xl space-y-3 border border-slate-100 relative">
-                <div class="relative">
-                    <input class="w-full bg-slate-50 p-3 rounded-xl font-bold" 
-                           id="ex-input-${i}"
-                           value="${ex.name}" 
-                           onfocus="showExerciseDropdown(${i})"
-                           oninput="filterExerciseDropdown(${i}, this.value)" 
-                           placeholder="Exercise Name">
-                    <div id="ex-dropdown-${i}" class="dropdown-list hidden"></div>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <input type="number" class="bg-slate-50 p-3 rounded-xl" value="${ex.sets}" oninput="FitTrack.training.exercises[${i}].sets=Number(this.value)" placeholder="Sets">
-                    <input type="number" class="bg-slate-50 p-3 rounded-xl" value="${ex.reps}" oninput="FitTrack.training.exercises[${i}].reps=Number(this.value)" placeholder="Reps">
-                    <input type="number" class="bg-slate-50 p-3 rounded-xl" value="${ex.weight}" oninput="FitTrack.training.exercises[${i}].weight=Number(this.value)" placeholder="Kg">
-                </div>
-            </div>
-        `).join('');
-    }
-};
-
-window.showExerciseDropdown = function(idx) {
-    const dropdown = document.getElementById(`ex-dropdown-${idx}`);
-    dropdown.classList.remove('hidden');
-    filterExerciseDropdown(idx, "");
-};
-
-window.filterExerciseDropdown = function(idx, val) {
-    const dropdown = document.getElementById(`ex-dropdown-${idx}`);
-    const results = FitTrack.state.customExerciseLibrary.filter(ex => ex.name.toLowerCase().includes(val.toLowerCase()));
-    dropdown.innerHTML = results.map(ex => `
-        <div onclick="selectExercise(${idx}, '${ex.name}')" class="p-3 hover:bg-slate-50 cursor-pointer text-xs font-bold border-b border-slate-50">
-            ${ex.name}
-        </div>
-    `).join('');
-};
-
-window.selectExercise = function(idx, name) {
-    FitTrack.training.exercises[idx].name = name;
-    document.getElementById(`ex-input-${idx}`).value = name;
-    document.getElementById(`ex-dropdown-${idx}`).classList.add('hidden');
-};
-
-window.openExerciseForm = function() {
-    const modal = document.getElementById('generic-modal-overlay');
-    const content = document.getElementById('modal-content');
-    const title = document.getElementById('modal-title');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-
-    confirmBtn.classList.remove('hidden');
-    title.innerText = "New Exercise Profile";
-    content.innerHTML = `
-        <input id="lib-ex-name" placeholder="Exercise Name" class="w-full bg-slate-50">
-        <div class="space-y-2">
-            <p class="text-[9px] font-black uppercase text-slate-400">Focus Areas</p>
-            <div class="grid grid-cols-2 gap-2">
-                <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl text-xs font-bold"><input type="checkbox" name="focus" value="Push"> Push</label>
-                <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl text-xs font-bold"><input type="checkbox" name="focus" value="Pull"> Pull</label>
-            </div>
-        </div>
-    `;
-
-    confirmBtn.onclick = () => {
-        const name = document.getElementById('lib-ex-name').value;
-        if (!name) return;
-        const focus = Array.from(document.querySelectorAll('input[name="focus"]:checked')).map(c => c.value);
-        FitTrack.state.customExerciseLibrary.push({ name, focus, equip: [] });
-        FitTrack.storage.save();
-        renderExerciseLibrary();
-        closeModal();
-    };
-
-    modal.style.display = "flex";
-};
-
-function renderExerciseLibrary() {
-    const list = document.getElementById('exercise-database-list');
-    list.innerHTML = FitTrack.state.customExerciseLibrary.map((ex, i) => `
-        <div class="flex justify-between items-center p-4 bg-white rounded-2xl border border-slate-50">
-            <div>
-                <p class="font-bold text-slate-800">${ex.name}</p>
-                <p class="text-[8px] text-slate-400 font-black uppercase tracking-widest">${(ex.focus || []).join(' • ')}</p>
-            </div>
-            <button onclick="removeExerciseFromLibrary(${i})" class="text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-        </div>
-    `).join('');
-    lucide.replace();
-}
-
-window.removeExerciseFromLibrary = function(index) {
-    FitTrack.state.customExerciseLibrary.splice(index, 1);
-    FitTrack.storage.save();
-    renderExerciseLibrary();
-};
-
-window.closeModal = () => {
-    document.getElementById('generic-modal-overlay').style.display = "none";
-};
-
-window.startManualWorkout = function() {
-    FitTrack.training.active = true;
-    FitTrack.training.exercises = [];
-    document.getElementById("workout-setup").classList.add("hidden");
-    document.getElementById("workout-active").classList.remove("hidden");
-    FitTrack.training.addExercise();
-};
-
-window.generateAIWorkout = function() {
-    startManualWorkout();
-    const focus = document.getElementById("workout-focus").value;
-    const env = FitTrack.state.ui.workoutEnv;
-    const items = workoutPresets[env][focus] || workoutPresets[env]["Full Body"];
-    FitTrack.training.exercises = [];
-    items.forEach(ex => FitTrack.training.addExercise(ex));
-};
-
-window.saveWorkout = function() {
-    FitTrack.state.history.training.push({ id: crypto.randomUUID(), date: new Date().toISOString(), exercises: [...FitTrack.training.exercises] });
-    FitTrack.xp.add(50, "Workout Completed");
-    cancelWorkout();
-};
-
-window.cancelWorkout = function() {
-    document.getElementById("workout-active").classList.add("hidden");
-    document.getElementById("workout-setup").classList.remove("hidden");
-};
-
-window.addExerciseField = () => FitTrack.training.addExercise();
-
-// Nutrition Logic
-window.startScanner = function() {
-    document.getElementById("scanner-overlay").style.display = "flex";
-    html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess);
-};
-
-window.stopScanner = function() {
-    if (html5QrCode) {
-        html5QrCode.stop().then(() => { document.getElementById("scanner-overlay").style.display = "none"; });
-    }
-};
-
-async function onScanSuccess(decodedText) {
-    stopScanner();
-    try {
-        const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${decodedText}.json`);
-        const data = await res.json();
-        if (data.status === 1) {
-            const p = data.product;
-            const finalItem = {
-                name: p.product_name || "Unknown Item",
-                calories: Math.round(p.nutriments['energy-kcal_100g'] || 0),
-                protein: p.nutriments.proteins_100g || 0,
-                carbs: 0, fat: 0 
-            };
-            FitTrack.state.history.nutrition.push({id: crypto.randomUUID(), ...finalItem, date: new Date().toISOString()});
-            FitTrack.xp.add(15, "Scanned Food");
-            updateNutritionalDashboard();
+            `).join('');
+            
+            let totalCals = 0;
+            let totalProt = 0;
+            mealBuilderItems.forEach(i => {
+                const multiplier = i.mode === 'packet' ? i.qty : (i.qty / 100);
+                totalCals += i.baseCals * multiplier;
+                totalProt += i.baseProt * multiplier;
+            });
+            
+            document.getElementById('meal-builder-stats').innerText = `${Math.round(totalCals)} Kcal • ${Math.round(totalProt)}g Protein`;
+            lucide.createIcons();
         }
-    } catch (e) { alert("Error connecting to API"); }
-}
 
-window.addCustomFood = function() {
-    const name = document.getElementById("new-food-name").value;
-    const cal = Number(document.getElementById("new-food-cal").value);
-    const prot = Number(document.getElementById("new-food-prot").value);
-    if (!name) return;
-    FitTrack.state.foodDatabase.push({ name, calories: cal, protein: prot, carbs: 0, fat: 0 });
-    document.getElementById("new-food-name").value = "";
-    document.getElementById("new-food-cal").value = "";
-    document.getElementById("new-food-prot").value = "";
-    renderInventory();
-    FitTrack.storage.save();
-};
+        function updateIngredientQty(id, val) {
+            const item = mealBuilderItems.find(i => i.id === id);
+            if (item) item.qty = parseFloat(val) || 0;
+            renderMealBuilder();
+        }
 
-function renderInventory() {
-    const list = document.getElementById("custom-db-list");
-    list.innerHTML = FitTrack.state.foodDatabase.map(f => `
-        <div class="p-4 flex justify-between items-center bg-white">
-            <div>
-                <div class="font-bold text-slate-800">${f.name}</div>
-                <div class="text-[10px] text-slate-400 font-bold">${f.calories} kcal | ${f.protein}g Protein</div>
-            </div>
-            <button onclick="logFoodItem('${f.name}')" class="text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg text-[10px] font-black uppercase">Add</button>
-        </div>
-    `).join('');
-}
+        function updateIngredientMode(id, val) {
+            const item = mealBuilderItems.find(i => i.id === id);
+            if (item) item.mode = val;
+            renderMealBuilder();
+        }
 
-window.handleFoodSearch = function(query) {
-    const results = FitTrack.state.foodDatabase.filter(f => f.name.toLowerCase().includes(query.toLowerCase()));
-    const box = document.getElementById("food-results");
-    box.innerHTML = results.map(f => `<div onclick="logFoodItem('${f.name}')" class="p-4 hover:bg-slate-50 cursor-pointer text-sm font-bold border-b">${f.name} - ${f.calories}kcal</div>`).join('');
-    box.classList.toggle("hidden", results.length === 0 || query === "");
-};
+        function removeIngredient(id) {
+            mealBuilderItems = mealBuilderItems.filter(i => i.id !== id);
+            renderMealBuilder();
+        }
 
-window.logFoodItem = function(name) {
-    const food = FitTrack.state.foodDatabase.find(f => f.name === name);
-    FitTrack.state.history.nutrition.push({id: crypto.randomUUID(), ...food, date: new Date().toISOString()});
-    FitTrack.xp.add(10, "Logged food");
-    document.getElementById("food-results").classList.add("hidden");
-    updateNutritionalDashboard();
-};
+        function saveMealToInventory() {
+            const name = document.getElementById('meal-builder-name').value;
+            if (!name || mealBuilderItems.length === 0) {
+                alert("Please name the meal and add items first.");
+                return;
+            }
+            
+            let totalCals = 0;
+            let totalProt = 0;
+            mealBuilderItems.forEach(i => {
+                const multiplier = i.mode === 'packet' ? i.qty : (i.qty / 100);
+                totalCals += i.baseCals * multiplier;
+                totalProt += i.baseProt * multiplier;
+            });
 
-function updateNutritionalDashboard() {
-    const today = new Date().toDateString();
-    const todayLogs = FitTrack.state.history.nutrition.filter(n => new Date(n.date).toDateString() === today);
-    const totals = todayLogs.reduce((a, b) => ({
-        calories: a.calories + b.calories,
-        protein: a.protein + b.protein,
-        carbs: a.carbs + b.carbs,
-        fat: a.fat + b.fat
-    }), {calories: 0, protein: 0, carbs: 0, fat: 0});
+            state.customFoodDb.unshift({ 
+                id: Date.now(), 
+                name: `Meal: ${name}`, 
+                calories: Math.round(totalCals), 
+                protein: Math.round(totalProt) 
+            });
+            
+            saveState();
+            renderCustomDb();
+            closeMealModal();
+            document.getElementById('meal-builder-name').value = '';
+            alert("Meal added to Inventory!");
+        }
 
-    document.getElementById("dash-calories").innerText = totals.calories;
-    document.getElementById("dash-protein").innerText = Math.round(totals.protein) + "g";
-    document.getElementById("dash-carbs").innerText = Math.round(totals.carbs) + "g";
-    document.getElementById("dash-fat").innerText = Math.round(totals.fat) + "g";
-    
-    const ring = document.getElementById("calorie-progress");
-    const goal = FitTrack.state.user.calorieGoal || 2000;
-    ring.style.strokeDashoffset = 534 - (Math.min(totals.calories / goal, 1) * 534);
-    FitTrack.storage.save();
-}
+        // --- NUTRITION LOGS ENHANCEMENT ---
+        function archiveDailyNutrition() {
+            const today = state.dailyMeals.filter(m => m.date === state.viewDate);
+            if (today.length === 0) {
+                alert("No food logged for today yet.");
+                return;
+            }
 
-// Metrics Logic
-window.saveMetrics = function() {
-    const weight = document.getElementById("body-weight").value;
-    if (!weight) return;
-    FitTrack.state.history.metrics.push({ id: crypto.randomUUID(), date: new Date().toISOString(), weight, shoulders: document.getElementById("m-shoulders").value, chest: document.getElementById("m-chest").value });
-    FitTrack.xp.add(25, "Check-in");
-    FitTrack.storage.save();
-};
+            const totalCals = today.reduce((a, b) => a + Number(b.calories), 0);
+            const totalProt = today.reduce((a, b) => a + Number(b.protein), 0);
 
-window.triggerPhoto = id => document.getElementById(`file-${id}`).click();
-window.handlePhoto = (input, type) => {
-    const reader = new FileReader();
-    reader.onload = e => { document.getElementById(`prev-${type}`).innerHTML = `<img src="${e.target.result}" class="rounded-2xl w-full h-full object-cover">`; };
-    reader.readAsDataURL(input.files[0]);
-};
+            // Storing the full day intake summary
+            const archiveEntry = {
+                id: Date.now(),
+                date: state.viewDate,
+                totalCalories: Math.round(totalCals),
+                totalProtein: Math.round(totalProt),
+                itemCount: today.length
+            };
 
-window.setHistoryTab = function(type) {
-    document.getElementById("hist-tab-train").classList.toggle("bg-white", type === 'training');
-    document.getElementById("hist-tab-nut").classList.toggle("bg-white", type === 'nutrition');
-    document.getElementById("hist-tab-body").classList.toggle("bg-white", type === 'body');
+            // Remove existing entry for the same date to avoid duplicates
+            state.nutritionalArchive = state.nutritionalArchive.filter(entry => entry.date !== state.viewDate);
+            state.nutritionalArchive.unshift(archiveEntry);
+            
+            saveState();
+            alert(`Daily log archived: ${archiveEntry.totalCalories} Kcal, ${archiveEntry.totalProtein}g Protein.`);
+            if (state.historyTab === 'nutrition') renderHistory();
+        }
 
-    const list = document.getElementById("history-list");
-    let data = type === 'training' ? FitTrack.state.history.training : type === 'nutrition' ? FitTrack.state.history.nutrition : FitTrack.state.history.metrics;
+        // --- EXISTING LOGIC ---
+        function toggleSpecificMuscleGrid() {
+            const focus = document.getElementById('workout-focus').value;
+            const container = document.getElementById('muscle-selection-container');
+            container.classList.toggle('hidden', focus !== 'Specific Muscle');
+        }
 
-    list.innerHTML = data.slice().reverse().map(item => {
-        const dateStr = new Date(item.date).toLocaleDateString();
-        if (type === 'body') return `<div onclick="viewMetricDetails('${item.id}')" class="glass-card p-4 text-sm cursor-pointer"><div class="flex justify-between"><b>${dateStr}</b><span>${item.weight}kg</span></div></div>`;
-        return `<div class="glass-card p-4 text-sm flex justify-between"><div><b>${dateStr}</b><p>${item.name || 'Session'}</p></div></div>`;
-    }).join('');
-    lucide.replace();
-};
+        function renderMuscleSelection() {
+            const container = document.getElementById('muscle-selection-grid');
+            container.innerHTML = MUSCLE_LIST.map(m => `
+                <div onclick="toggleMuscleFocus('\( {m}')" id="muscle-chip- \){m}" class="muscle-chip p-2 rounded-xl text-[8px] font-black uppercase text-center ${state.selectedMuscles.includes(m) ? 'selected' : 'bg-white text-slate-400'}">
+                    ${m}
+                </div>
+            `).join('');
+        }
 
-window.viewMetricDetails = function(id) {
-    const metric = FitTrack.state.history.metrics.find(m => m.id === id);
-    const modal = document.getElementById('generic-modal-overlay');
-    const content = document.getElementById('modal-content');
-    const title = document.getElementById('modal-title');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
+        function toggleMuscleFocus(muscle) {
+            if (state.selectedMuscles.includes(muscle)) state.selectedMuscles = state.selectedMuscles.filter(m => m !== muscle);
+            else state.selectedMuscles.push(muscle);
+            renderMuscleSelection();
+        }
 
-    confirmBtn.classList.remove('hidden');
-    title.innerText = `Update: ${new Date(metric.date).toLocaleDateString()}`;
-    content.innerHTML = `
-        <label class="text-[9px] font-black uppercase text-slate-400">Weight (kg)</label>
-        <input id="edit-weight" type="number" step="0.1" value="${metric.weight}" class="w-full bg-slate-50 p-4">
-        <button onclick="deleteMetric('${id}')" class="w-full bg-red-50 text-red-500 py-3 rounded-xl font-bold">Delete</button>
-    `;
+        function toggleCardioOptions() {
+            document.getElementById('cardio-options').classList.toggle('hidden', !document.getElementById('add-cardio-check').checked);
+        }
 
-    confirmBtn.onclick = () => {
-        metric.weight = document.getElementById('edit-weight').value;
-        FitTrack.storage.save();
-        setHistoryTab('body');
-        closeModal();
-    };
-    modal.style.display = "flex";
-};
+        function startManualWorkout() {
+            document.getElementById('workout-setup').classList.add('hidden');
+            document.getElementById('workout-active').classList.remove('hidden');
+            document.getElementById('active-workout-title').innerText = document.getElementById('workout-focus').value;
+            document.getElementById('exercise-list').innerHTML = ''; 
+            document.getElementById('extra-active-section').innerHTML = '';
+            activeWorkoutStart = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            if (document.getElementById('add-cardio-check').checked) addCardioSection();
+            if (document.getElementById('add-core-check').checked) initCoreSection();
+        }
 
-window.deleteMetric = id => {
-    FitTrack.state.history.metrics = FitTrack.state.history.metrics.filter(m => m.id !== id);
-    FitTrack.storage.save();
-    setHistoryTab('body');
-    closeModal();
-};
+        function addCardioSection() {
+            const type = document.getElementById('cardio-type').value;
+            const exercise = document.getElementById('cardio-exercise').value;
+            const cont = document.getElementById('extra-active-section');
+            const div = document.createElement('div');
+            div.className = "glass-card p-6 rounded-[2rem] border-2 border-indigo-100";
+            div.innerHTML = `
+                <h4 class="text-sm font-black uppercase text-indigo-600 mb-3">Cardio: ${exercise}</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" placeholder="Time (min)" class="p-3 bg-slate-50 rounded-xl font-bold text-center">
+                    <input type="number" placeholder="Distance" class="p-3 bg-slate-50 rounded-xl font-bold text-center">
+                </div>
+                <p class="text-[9px] font-bold text-slate-400 mt-2 uppercase">Training: ${type}</p>
+            `;
+            cont.appendChild(div);
+        }
 
-FitTrack.xp = {
-    add(amt) {
-        FitTrack.state.user.xp += amt;
-        this.updateLevel();
-        FitTrack.storage.save();
-        updateGamificationUI();
-    },
-    updateLevel() {
-        FitTrack.state.user.level = Math.floor(FitTrack.state.user.xp / 500) + 1;
-        FitTrack.state.user.tier = FitTrack.state.user.level >= 10 ? "Diamond Pro" : FitTrack.state.user.level >= 5 ? "Silver Elite" : "Bronze Athlete";
-    }
-};
+        function initCoreSection() {
+            const cont = document.getElementById('extra-active-section');
+            const div = document.createElement('div');
+            div.className = "glass-card p-6 rounded-[2rem] border-2 border-emerald-100";
+            div.id = "core-finisher-container";
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-sm font-black uppercase text-emerald-600">Core Finisher</h4>
+                    <button onclick="addNewCoreExerciseRow()" class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase rounded-lg border border-emerald-100">+ Add Core Exercise</button>
+                </div>
+                <div id="core-rows-list" class="space-y-4"></div>
+            `;
+            cont.appendChild(div);
+            addNewCoreExerciseRow();
+        }
 
-function updateGamificationUI() {
-    const xpInLevel = FitTrack.state.user.xp % 500;
-    document.getElementById('user-xp-display').innerText = xpInLevel;
-    document.getElementById('user-lvl-display').innerText = FitTrack.state.user.level;
-    document.getElementById('user-tier-display').innerText = FitTrack.state.user.tier;
-    document.getElementById('xp-progress-bar').style.width = `${(xpInLevel / 500) * 100}%`;
-    document.getElementById('streak-count').innerText = FitTrack.state.user.streak;
+        function addNewCoreExerciseRow() {
+            const list = document.getElementById('core-rows-list');
+            const rowId = 'core-' + Math.random().toString(36).substr(2, 9);
+            const div = document.createElement('div');
+            div.className = "flex flex-col gap-2 bg-slate-50 p-3 rounded-xl shadow-sm border border-slate-100";
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <select class="text-xs font-bold bg-transparent outline-none w-3/4">
+                        \( {CORE_EXERCISES.map(ex => `<option value=" \){ex}">${ex}</option>`).join('')}
+                    </select>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-slate-300 hover:text-red-400">×</button>
+                </div>
+                <div class="core-input-grid">
+                    <input type="number" placeholder="kg" class="col-span-4 p-2 bg-white rounded text-center text-[10px] font-bold border border-slate-100" title="Core Weight">
+                    <input type="number" placeholder="val" class="col-span-4 p-2 bg-white rounded text-center text-[10px] font-bold border border-slate-100">
+                    <div class="col-span-5 grid grid-cols-2 gap-2 border-l border-slate-200 pl-2">
+                        <select class="text-[7px] font-black uppercase p-2 rounded bg-white border border-slate-100 outline-none">
+                            <option>Reps</option>
+                            <option>Time (s)</option>
+                        </select>
+                        <label class="text-[7px] flex items-center justify-center gap-1 font-black uppercase text-slate-400">
+                            <input type="checkbox" class="accent-emerald-500 scale-75"> BW
+                        </label>
+                    </div>
+                </div>
+            `;
+            list.appendChild(div);
+        }
 
-    const badgeGrid = document.getElementById('badge-grid');
-    badgeGrid.innerHTML = FitTrack.state.availableBadges.map(badge => `
-        <div class="flex flex-col items-center">
-            <div class="w-12 h-12 rounded-full flex items-center justify-center ${FitTrack.state.unlockedBadges.includes(badge.id) ? 'bg-indigo-100' : 'bg-slate-100'}">
-                <i data-lucide="${badge.icon}" class="w-6 h-6"></i>
-            </div>
-        </div>
-    `).join('');
-    lucide.replace();
-}
+        function addExerciseField(prefillName = null, sets = 3) {
+            const list = document.getElementById('exercise-list');
+            const focus = document.getElementById('workout-focus').value;
+            const availableEquip = state.equipment[state.workoutEnv];
+            
+            const validExercises = EXERCISE_DB.filter(ex => {
+                if (focus === "Specific Muscle" && state.selectedMuscles.length > 0) {
+                    return ex.muscles.some(m => state.selectedMuscles.includes(m));
+                }
+                if (focus !== "Full Body" && !ex.focus.includes(focus)) return false;
+                return availableEquip[ex.equipment] || ex.equipment === 'bodyweight';
+            });
 
-window.updateWater = function(amt) {
-    const countEl = document.getElementById("water-count");
-    let current = (parseFloat(countEl.innerText) || 0) + (amt/1000);
-    countEl.innerText = `${Math.max(0, current).toFixed(1)} / 2.5 Liters`;
-};
+            const sortedExercises = [...validExercises].sort((a,b) => a.name.localeCompare(b.name));
+            const options = sortedExercises.map(e => `<option value="${e.name}" \( {e.name === prefillName ? 'selected' : ''}> \){e.name}</option>`).join('');
+            
+            const exId = Date.now() + Math.random().toString(16).slice(2);
+            const div = document.createElement('div');
+            div.className = "glass-card p-4 rounded-2xl mb-4";
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <select class="bg-transparent font-bold outline-none text-slate-800 w-full text-sm">${options || '<option>Manual Exercise</option>'}</select>
+                    <button class="text-red-400 font-bold ml-2" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+                <div id="sets-${exId}" class="space-y-2 mb-3"></div>
+                <button onclick="addSetToExercise('${exId}')" class="w-full py-2 bg-slate-50 text-slate-500 rounded-lg text-xs font-bold uppercase hover:bg-slate-100">+ Add Set</button>
+            `;
+            list.appendChild(div);
+            for(let i=0; i<sets; i++) addSetToExercise(exId);
+        }
 
-window.resetData = () => { if(confirm("Erase all?")) { localStorage.clear(); location.reload(); } };
+        function addSetToExercise(exId) {
+            const container = document.getElementById(`sets-${exId}`);
+            if (!container) return;
+            const count = container.children.length + 1;
+            const row = document.createElement('div');
+            row.className = "flex gap-2 items-center set-row";
+            row.innerHTML = `
+                <span class="text-[10px] text-slate-400 font-bold w-4">${count}</span>
+                <input type="number" placeholder="kg" class="bg-slate-50">
+                <input type="number" placeholder="reps" class="bg-slate-50">
+                <div class="w-6 h-6 rounded-full border-2 border-slate-200 flex items-center justify-center cursor-pointer" onclick="this.classList.toggle('bg-green-500'); this.classList.toggle('border-green-500')">
+                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
+                </div>
+            `;
+            container.appendChild(row);
+            lucide.createIcons();
+        }
 
-document.addEventListener("DOMContentLoaded", () => {
-    FitTrack.storage.load();
-    lucide.replace();
-    switchTab('dashboard');
-    updateNutritionalDashboard();
-});
-</script>
+        function generateAIWorkout() {
+            startManualWorkout();
+            const focus = document.getElementById('workout-focus').value;
+            const availableEquip = state.equipment[state.workoutEnv];
+            const pool = EXERCISE_DB.filter(ex => {
+                if (focus === "Specific Muscle") return ex.muscles.some(m => state.selectedMuscles.includes(m));
+                return (focus === "Full Body" || ex.focus.includes(focus)) && (availableEquip[ex.equipment] || ex.equipment === 'bodyweight');
+            });
+            pool.sort(() => 0.5 - Math.random()).slice(0, 5).forEach(ex => addExerciseField(ex.name, 3));
+        }
+
+        function saveWorkout() {
+            clearInterval(timerInterval);
+            const exercisesLogged = [];
+            document.querySelectorAll('#exercise-list > div').forEach(card => {
+                const selectElement = card.querySelector('select');
+                if (!selectElement) return;
+                const name = selectElement.value;
+                const sets = [];
+                card.querySelectorAll('.set-row').forEach(row => {
+                    const inputs = row.querySelectorAll('input');
+                    sets.push({ kg: inputs[0].value, reps: inputs[1].value });
+                });
+                exercisesLogged.push({ name, sets });
+            });
+            
+            const coreList = document.getElementById('core-rows-list');
+            if (coreList && coreList.children.length > 0) {
+                coreList.querySelectorAll('div.flex-col').forEach(row => {
+                    const name = row.querySelector('select').value;
+                    const inputs = row.querySelectorAll('input');
+                    const units = row.querySelectorAll('select')[1].value;
+                    exercisesLogged.push({ 
+                        name: `Core: ${name}`, 
+                        sets: [{ kg: inputs[0].value, val: inputs[1].value, unit: units, bw: inputs[2].checked }] 
+                    });
+                });
+            }
+
+            state.workoutHistory.unshift({
+                id: Date.now(),
+                date: state.viewDate,
+                focus: document.getElementById('active-workout-title').innerText,
+                duration: document.getElementById('workout-timer').innerText,
+                exercises: exercisesLogged
+            });
+            saveState();
+            document.getElementById('workout-setup').classList.remove('hidden'); 
+            document.getElementById('workout-active').classList.add('hidden');
+            switchTab('history');
+        }
+
+        function cancelWorkout() {
+            if(confirm("Exit workout? Data will be lost.")) {
+                clearInterval(timerInterval);
+                document.getElementById('workout-setup').classList.remove('hidden'); 
+                document.getElementById('workout-active').classList.add('hidden');
+            }
+        }
+
+        function updateTimer() {
+            const diff = Math.floor((Date.now() - activeWorkoutStart) / 1000);
+            const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+            const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+            const s = (diff % 60).toString().padStart(2, '0');
+            document.getElementById('workout-timer').innerText = `\( {h}: \){m}:${s}`;
+        }
+
+        function setWorkoutEnv(env) { 
+            state.workoutEnv = env; 
+            document.getElementById('current-env-label').innerText = env;
+            document.getElementById('env-tab-gym').className = `px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${env === 'gym' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('env-tab-home').className = `px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${env === 'home' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+        }
+
+        function renderDashboard() {
+            const today = state.dailyMeals.filter(m => m.date === state.viewDate);
+            const cals = today.reduce((a, b) => a + Number(b.calories), 0);
+            const prot = today.reduce((a, b) => a + Number(b.protein), 0);
+            document.getElementById('dash-calories').innerText = Math.round(cals);
+            document.getElementById('dash-protein').innerText = Math.round(prot) + 'g';
+            document.getElementById('dash-carbs').innerText = Math.round(cals * 0.4 / 4) + 'g';
+            document.getElementById('dash-fat').innerText = Math.round(cals * 0.3 / 9) + 'g';
+            const progress = Math.min((cals / state.goals.calories) * 534, 534);
+            const circle = document.getElementById('calorie-progress');
+            if (circle) circle.style.strokeDashoffset = 534 - progress;
+            const water = state.waterLogs[state.viewDate] || 0;
+            document.getElementById('water-count').innerText = `${(water/1000).toFixed(1)} / ${(state.goals.water/1000).toFixed(1)}L`;
+            document.getElementById('muscle-volume-stats').innerHTML = `<div class="bg-white/10 p-3 rounded-xl"><div class="text-[10px] opacity-70">SESSIONS</div><div class="font-bold text-xl">${state.workoutHistory.length}</div></div><div class="bg-white/10 p-3 rounded-xl"><div class="text-[10px] opacity-70">STREAK</div><div class="font-bold text-xl">1</div></div>`;
+
+            // Added from first code: Mission & Wins
+            document.getElementById('mission-display').innerText = state.mission || "Define your mission in settings...";
+            const winsList = document.getElementById('wins-list');
+            winsList.innerHTML = '';
+            if (state.wins.length === 0) {
+                winsList.innerHTML = '<li class="text-sm">• No wins recorded yet</li>';
+            } else {
+                state.wins.forEach(win => {
+                    const li = document.createElement('li');
+                    li.className = "text-sm flex items-center";
+                    li.innerHTML = `<span class="text-indigo-500 mr-2">✔</span> ${win}`;
+                    winsList.appendChild(li);
+                });
+            }
+
+            // Added from first code: Add-on Visibility
+            document.getElementById('card-steps').classList.toggle('hidden', !state.addons.steps);
+            document.getElementById('card-habits').classList.toggle('hidden', !state.addons.habits);
+
+            if (state.addons.steps) {
+                document.getElementById('current-steps').innerText = state.dailySteps;
+                document.getElementById('goal-steps').innerText = state.stepGoal;
+                const pct = Math.min(100, Math.round((state.dailySteps / state.stepGoal) * 100));
+                document.getElementById('step-progress').innerText = pct + '%';
+            }
+
+            if (state.addons.habits) {
+                const habitDiv = document.getElementById('habits-display');
+                habitDiv.innerHTML = '';
+                state.habitList.forEach(habit => {
+                    const isDone = state.habitsCompleted[habit];
+                    const btn = document.createElement('button');
+                    btn.className = `px-3 py-2 rounded-lg text-xs font-bold transition-all ${isDone ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500'}`;
+                    btn.innerText = habit;
+                    btn.onclick = () => toggleHabit(habit);
+                    habitDiv.appendChild(btn);
+                });
+                if (state.habitList.length === 0) {
+                    habitDiv.innerHTML = '<p class="text-xs text-slate-500">No habits set in Settings</p>';
+                }
+            }
+        }
+
+        function updateWater(ml) { 
+            state.waterLogs[state.viewDate] = Math.max(0, (state.waterLogs[state.viewDate] || 0) + ml); 
+            saveState(); renderDashboard(); 
+        }
+
+        function handleFoodSearch(val) {
+            const results = document.getElementById('food-results');
+            if (!val) { results.classList.add('hidden'); return; }
+            const filtered = state.customFoodDb.filter(f => f.name.toLowerCase().includes(val.toLowerCase()));
+            results.innerHTML = filtered.map(item => `<div class="p-4 border-b hover:bg-slate-50 cursor-pointer" onclick="initiateFoodLog('${item.name}', ${item.calories}, \( {item.protein})"><b class="text-sm"> \){item.name}</b><br><small class="text-slate-400">${item.calories} Kcal / ${item.protein}g P</small></div>`).join('');
+            results.classList.remove('hidden');
+        }
+
+        function initiateFoodLog(name, cals, prot) {
+            portionSelection = { item: { name, calories: cals, protein: prot }, mode: 'packet' };
+            document.getElementById('portion-item-name').innerText = name;
+            document.getElementById('portion-qty-input').value = 1;
+            document.getElementById('portion-modal').style.display = 'flex';
+        }
+
+        function confirmLogPortion() {
+            const qty = parseFloat(document.getElementById('portion-qty-input').value);
+            const finalCals = portionSelection.mode === 'packet' ? portionSelection.item.calories * qty : (portionSelection.item.calories / 100) * qty;
+            const finalProt = portionSelection.mode === 'packet' ? portionSelection.item.protein * qty : (portionSelection.item.protein / 100) * qty;
+            state.dailyMeals.unshift({ id: Date.now(), date: state.viewDate, name: portionSelection.item.name, calories: Math.round(finalCals), protein: Math.round(finalProt) });
+            saveState(); closePortionModal(); renderDailyLog(); renderDashboard();
+        }
+
+        function closePortionModal() { document.getElementById('portion-modal').style.display = 'none'; }
+        function setPortionMode(mode) { 
+            portionSelection.mode = mode; 
+            document.getElementById('p-mode-packet').className = `flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${mode === 'packet' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('p-mode-custom').className = `flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${mode === 'custom' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+        }
+        function adjustPortionQty(v) { document.getElementById('portion-qty-input').value = Math.max(0.1, parseFloat(document.getElementById('portion-qty-input').value) + (v * 0.5)); }
+
+        function saveToDatabase() {
+            const name = document.getElementById('form-name').value;
+            const cals = document.getElementById('form-cals').value;
+            const prot = document.getElementById('form-prot').value;
+            if(!name || !cals) return;
+            state.customFoodDb.unshift({ id: Date.now(), name, calories: Number(cals), protein: Number(prot) || 0 });
+            saveState(); renderCustomDb();
+            document.getElementById('form-name').value = ''; document.getElementById('form-cals').value = ''; document.getElementById('form-prot').value = '';
+        }
+
+        function renderCustomDb() {
+            const list = document.getElementById('custom-db-list');
+            list.innerHTML = state.customFoodDb.map(item => `<div class="p-4 flex justify-between items-center"><div><b>\( {item.name}</b><br><small> \){item.calories} Kcal</small></div><button onclick="initiateFoodLog('${item.name}', ${item.calories}, ${item.protein})" class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl">+</button></div>`).join('');
+        }
+
+        function renderDailyLog() {
+            const container = document.getElementById('daily-log-list');
+            const today = state.dailyMeals.filter(m => m.date === state.viewDate);
+            container.innerHTML = today.map(meal => `<div class="glass-card p-4 rounded-2xl flex justify-between"><div><b>\( {meal.name}</b><br><small> \){meal.calories} Kcal / \( {meal.protein}g Protein</small></div><button onclick="deleteMeal( \){meal.id})">×</button></div>`).join('');
+            
+            const totalCals = today.reduce((a, b) => a + Number(b.calories), 0);
+            const totalProt = today.reduce((a, b) => a + Number(b.protein), 0);
+            
+            const totalsCard = document.getElementById('daily-totals-card');
+            if (today.length > 0) {
+                totalsCard.classList.remove('hidden');
+                document.getElementById('total-day-cals').innerText = `${Math.round(totalCals)} Kcal`;
+                document.getElementById('total-day-prot').innerText = `${Math.round(totalProt)}g Protein`;
+            } else {
+                totalsCard.classList.add('hidden');
+            }
+        }
+
+        function deleteMeal(id) { state.dailyMeals = state.dailyMeals.filter(m => m.id !== id); saveState(); renderDailyLog(); renderDashboard(); }
+
+        function setNutritionTab(t) { state.nutritionTab = t; renderNutrition(); }
+        function renderNutrition() {
+            document.getElementById('nut-tab-log').className = `flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${state.nutritionTab === 'log' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('nut-tab-db').className = `flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${state.nutritionTab === 'database' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('nut-view-log').classList.toggle('hidden', state.nutritionTab !== 'log');
+            document.getElementById('nut-view-db').classList.toggle('hidden', state.nutritionTab !== 'database');
+        }
+
+        function startScanner(target) { 
+            scannerMode = target;
+            document.getElementById('scanner-container').classList.remove('hidden');
+            html5QrCode = new Html5Qrcode("scanner-mount");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => { stopScanner(); fetchOpenFoodFacts(text); });
+        }
+        function stopScanner() { if(html5QrCode) html5QrCode.stop(); document.getElementById('scanner-container').classList.add('hidden'); }
+        async function fetchOpenFoodFacts(code) {
+            const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
+            const data = await res.json();
+            if(data.status === 1) {
+                const name = data.product.product_name || "Unknown Item";
+                const cals = Math.round(data.product.nutriments?.['energy-kcal_100g'] || 0);
+                const prot = Math.round(data.product.nutriments?.['proteins_100g'] || 0);
+                
+                if (scannerMode === 'meal') {
+                    addIngredientToMeal(name, cals, prot);
+                } else {
+                    document.getElementById('form-name').value = name;
+                    document.getElementById('form-cals').value = cals;
+                    document.getElementById('form-prot').value = prot;
+                }
+            }
+        }
+
+        function triggerPhoto(type) { currentPhotoType = type; document.getElementById('photo-input').click(); }
+        function handlePhotoUpload(e) {
+            const reader = new FileReader();
+            reader.onload = (event) => { state.currentPhotos[currentPhotoType] = event.target.result; renderMetrics(); saveState(); };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function setMetricsTab(t) { 
+            state.metricsTab = t; 
+            document.getElementById('metrics-tab-checkin').className = `flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${t === 'checkin' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('metrics-tab-logs').className = `flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${t === 'logs' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('metrics-view-checkin').classList.toggle('hidden', t !== 'checkin');
+            document.getElementById('metrics-view-logs').classList.toggle('hidden', t !== 'logs');
+        }
+
+        function saveMetrics() {
+            state.metricsHistory.unshift({ id: Date.now(), date: state.viewDate, weight: document.getElementById('body-weight').value, measurements: { waist: document.getElementById('m-waist').value }, photos: { ...state.currentPhotos } });
+            saveState(); alert("Log Saved!");
+        }
+
+        function renderMetrics() {
+            ['front', 'side', 'back'].forEach(t => {
+                const img = document.getElementById(`img-${t}`);
+                if(state.currentPhotos[t]) { img.src = state.currentPhotos[t]; img.classList.remove('hidden'); }
+            });
+        }
+
+        function setHistoryTab(t) { state.historyTab = t; renderHistory(); }
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            document.getElementById('hist-tab-train').className = `flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${state.historyTab === 'training' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            document.getElementById('hist-tab-nut').className = `flex-1 py-3 text-[10px] font-black uppercase rounded-xl transition-all ${state.historyTab === 'nutrition' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`;
+            
+            if(state.historyTab === 'training') {
+                list.innerHTML = state.workoutHistory.map(w => `<div class="glass-card p-4 rounded-2xl mb-2"><b>\( {w.focus}</b><br><small> \){w.date} • ${w.duration}</small></div>`).join('');
+            } else {
+                list.innerHTML = (state.nutritionalArchive || []).map(entry => `
+                    <div class="glass-card p-4 rounded-2xl mb-2 flex justify-between items-center">
+                        <div>
+                            <b class="text-sm">Daily Summary: ${entry.date}</b><br>
+                            <small class="text-slate-500">${entry.itemCount} items logged</small>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-indigo-600 font-black text-xs">${entry.totalCalories} Kcal</div>
+                            <div class="text-[9px] font-bold text-slate-400 uppercase">${entry.totalProtein}g Protein</div>
+                        </div>
+                    </div>
+                `).join('') || `<p class="text-center text-[10px] text-slate-400 italic py-8">Save your daily food logs to see summaries here</p>`;
+            }
+        }
+
+        function initEquipmentSettings() {
+            const gymCont = document.getElementById('gym-equip-list');
+            gymCont.innerHTML = Object.keys(state.equipment.gym).map(key => `<button onclick="toggleEquip('gym', '${key}')" class="p-3 rounded-xl text-[10px] font-bold uppercase \( {state.equipment.gym[key] ? 'bg-indigo-600 text-white' : 'bg-slate-100'}"> \){key}</button>`).join('');
+            const homeCont = document.getElementById('home-equip-list');
+            homeCont.innerHTML = Object.keys(state.equipment.home).map(key => `<button onclick="toggleEquip('home', '${key}')" class="p-3 rounded-xl text-[10px] font-bold uppercase \( {state.equipment.home[key] ? 'bg-indigo-600 text-white' : 'bg-slate-100'}"> \){key}</button>`).join('');
+        }
+
+        function toggleEquip(env, key) { state.equipment[env][key] = !state.equipment[env][key]; saveState(); initEquipmentSettings(); }
+
+        function resetData() { if(confirm("Permanently clear all data? This cannot be undone.")) { localStorage.clear(); location.reload(); } }
+        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+
+        // --- Added from first code: SETTINGS & CONFIG ---
+        function updateAddonUI() {
+            state.addons.steps = document.getElementById('toggle-steps').checked;
+            state.addons.habits = document.getElementById('toggle-habits').checked;
+            
+            document.getElementById('goal-steps-config').classList.toggle('hidden', !state.addons.steps);
+            document.getElementById('goal-habits-config').classList.toggle('hidden', !state.addons.habits);
+            
+            saveState();
+            renderDashboard();
+        }
+
+        function saveConfig() {
+            state.stepGoal = parseInt(document.getElementById('config-step-goal').value) || 10000;
+            state.goals.calories = parseInt(document.getElementById('config-cals-goal').value) || 2000;
+            
+            const habitsInput = document.getElementById('config-habits-list').value;
+            state.habitList = habitsInput.split(',').map(h => h.trim()).filter(h => h !== "");
+            
+            saveState();
+        }
+
+        function saveReflection() {
+            state.mission = document.getElementById('settings-mission').value;
+            const winsText = document.getElementById('settings-wins').value;
+            state.wins = winsText.split('\n').filter(w => w.trim() !== "");
+            
+            saveState();
+            alert("Daily Reflection Updated!");
+            renderDashboard();
+        }
+
+        // --- Added from first code: FEATURE LOGIC ---
+        function updateSteps() {
+            state.dailySteps = parseInt(document.getElementById('step-input').value) || 0;
+            saveState();
+            renderDashboard();
+        }
+
+        function toggleHabit(habit) {
+            state.habitsCompleted[habit] = !state.habitsCompleted[habit];
+            saveState();
+            renderDashboard();
+        }
+
+        // --- Added from first code: UTILS ---
+        function clearData() {
+            if (confirm("Delete all your progress? This cannot be undone.")) {
+                localStorage.removeItem('fittrack_combined_v8');
+                location.reload();
+            }
+        }
+    </script>
 </body>
-</html>
-
+    </html>
