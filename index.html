@@ -178,9 +178,49 @@
             cursor: pointer;
             position: relative;
         }
+
+        /* Loading Screen Styles */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        #loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #progress-container {
+            width: 80%;
+            max-width: 300px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            height: 8px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background: var(--brand-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body class="pb-28">
+
+    <!-- Initial Loading Screen -->
+    <div id="loader">
+        <h2 class="text-2xl font-bold text-indigo-600 mb-4">Loading FitTrack Pro...</h2>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <p id="progress-text" class="mt-2 text-sm text-slate-600">0% completed</p>
+    </div>
 
     <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-5 sticky top-0 z-40 flex justify-between items-center">
         <div>
@@ -775,6 +815,23 @@
     </div>
 
     <script>
+        // Loading Progress Simulation
+        let progressInterval;
+        document.addEventListener('DOMContentLoaded', () => {
+            const bar = document.getElementById('progress-bar');
+            const text = document.getElementById('progress-text');
+            let progress = 0;
+            progressInterval = setInterval(() => {
+                if (progress < 100) {
+                    progress += 1;
+                    bar.style.width = progress + '%';
+                    text.innerText = progress + '% completed';
+                } else {
+                    clearInterval(progressInterval);
+                }
+            }, 50); // Adjust speed: 50ms per 1% = ~5s total
+        });
+
         // --- DATA & STATE ---
         const EXERCISE_DB = [
             { name: "Barbell Bench Press", focus: ["Full Body", "Upper Body", "Push"], equipment: "barbell", muscles: ["Chest", "Triceps", "Shoulders"] },
@@ -831,6 +888,14 @@
         let mealBuilderItems = [];
 
         window.onload = () => {
+            // Complete progress to 100% and hide loader
+            clearInterval(progressInterval);
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('progress-text').innerText = '100% completed';
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 500); // Short delay to show completion
+
             const saved = localStorage.getItem('fittrack_combined_v8');
             if (saved) state = { ...state, ...JSON.parse(saved) };
             document.getElementById('status-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -900,7 +965,7 @@
             results.innerHTML = filtered.map(item => `
                 <div class="p-4 border-b hover:bg-slate-50 cursor-pointer flex justify-between items-center" onclick="addIngredientToMeal('${item.name}', ${item.calories}, ${item.protein})">
                     <div><b class="text-[11px] font-bold">\( {item.name}</b><br><small class="text-slate-400 text-[9px]"> \){item.calories} Kcal / ${item.protein}g P</small></div>
-                <i data-lucide="plus" class="w-4 h-4 text-indigo-500"></i>
+                    <i data-lucide="plus" class="w-4 h-4 text-indigo-500"></i>
                 </div>
             `).join('');
             results.classList.remove('hidden');
@@ -1532,4 +1597,4 @@
         }
     </script>
 </body>
-    </html>
+                </html>
