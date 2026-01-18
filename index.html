@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitTrack Pro V8</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com" onload="updateLoadProgress(20, 'Loading Tailwind CSS...')"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript" onload="updateLoadProgress(40, 'Loading HTML5 QR Code Scanner...')"></script>
+    <script src="https://unpkg.com/lucide@latest" onload="updateLoadProgress(60, 'Loading Lucide Icons...')"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
@@ -220,6 +220,7 @@
             <div id="progress-bar"></div>
         </div>
         <p id="progress-text" class="mt-2 text-sm text-slate-600">0% completed</p>
+        <p id="loading-status" class="mt-1 text-xs text-slate-500">Initializing...</p>
     </div>
 
     <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-5 sticky top-0 z-40 flex justify-between items-center">
@@ -815,87 +816,27 @@
     </div>
 
     <script>
-        // Loading Progress Simulation
-        let progressInterval;
+        let currentProgress = 0;
+
+        function updateLoadProgress(pct, status) {
+            currentProgress = pct;
+            document.getElementById('progress-bar').style.width = currentProgress + '%';
+            document.getElementById('progress-text').innerText = currentProgress + '% completed';
+            document.getElementById('loading-status').innerText = status;
+            if (currentProgress >= 100) {
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 500);
+            }
+        }
+
+        // Loading Progress Simulation for non-script loads
         document.addEventListener('DOMContentLoaded', () => {
-            const bar = document.getElementById('progress-bar');
-            const text = document.getElementById('progress-text');
-            let progress = 0;
-            progressInterval = setInterval(() => {
-                if (progress < 100) {
-                    progress += 1;
-                    bar.style.width = progress + '%';
-                    text.innerText = progress + '% completed';
-                } else {
-                    clearInterval(progressInterval);
-                }
-            }, 50); // Adjust speed: 50ms per 1% = ~5s total
+            updateLoadProgress(0, 'Initializing...');
         });
 
-        // --- DATA & STATE ---
-        const EXERCISE_DB = [
-            { name: "Barbell Bench Press", focus: ["Full Body", "Upper Body", "Push"], equipment: "barbell", muscles: ["Chest", "Triceps", "Shoulders"] },
-            { name: "Dumbbell Press", focus: ["Full Body", "Upper Body", "Push"], equipment: "dumbbell", muscles: ["Chest", "Triceps"] },
-            { name: "Incline Barbell Press", focus: ["Upper Body", "Push"], equipment: "barbell", muscles: ["Chest", "Shoulders"] },
-            { name: "Pull Ups", focus: ["Full Body", "Upper Body", "Pull"], equipment: "bodyweight", muscles: ["Back", "Biceps"] },
-            { name: "Lat Pulldowns", focus: ["Upper Body", "Pull"], equipment: "cable", muscles: ["Back", "Biceps"] },
-            { name: "Barbell Rows", focus: ["Full Body", "Upper Body", "Pull"], equipment: "barbell", muscles: ["Back", "Biceps"] },
-            { name: "Barbell Squats", focus: ["Full Body", "Lower Body/Legs", "Squat"], equipment: "barbell", muscles: ["Quads", "Glutes"] },
-            { name: "Leg Press", focus: ["Lower Body/Legs", "Squat"], equipment: "machine", muscles: ["Quads"] },
-            { name: "Barbell Deadlift", focus: ["Full Body", "Lower Body/Legs", "Hinge"], equipment: "barbell", muscles: ["Back", "Hamstrings", "Glutes"] },
-            { name: "Romanian Deadlifts", focus: ["Lower Body/Legs", "Hinge"], equipment: "barbell", muscles: ["Hamstrings", "Glutes"] },
-            { name: "Overhead Press", focus: ["Upper Body", "Push"], equipment: "barbell", muscles: ["Shoulders"] },
-            { name: "Lunges", focus: ["Lower Body/Legs", "Squat"], equipment: "dumbbell", muscles: ["Quads", "Glutes"] }
-        ];
-
-        const CORE_EXERCISES = ["Plank", "Crunches", "Leg Raises", "Russian Twists", "Deadbugs", "Bicycle Crunches", "Hollow Hold", "Bird Dog"];
-        const MUSCLE_LIST = ["Chest", "Back", "Shoulders", "Quads", "Hamstrings", "Glutes", "Triceps", "Biceps", "Core"];
-
-        const TUTORIALS = [
-            { title: "Training Setup", content: "Select your environment (Gym/Home). Choose a focus. If you select 'Specific Muscle', you can pick multiple target areas. Check 'Cardio' or 'Core' to add those finishers to the end of your session." },
-            { title: "Tracking", content: "Inside the workout, log your sets, weight, and reps. For core exercises, you can toggle between Reps/Time and bodyweight modes. We've added a weight input to core so you can track weighted planks or crunches!" },
-            { title: "Meal Builder", content: "In the Nutrition tab, use the 'Make a Meal' button to combine multiple items. Adjust portions (packet/grams), name your creation, and save it to your inventory for one-tap logging." }
-        ];
-
-        let timerInterval;
-        let activeWorkoutStart = null;
-        let currentPhotoType = null;
-        let html5QrCode;
-        let scannerMode = 'db'; // 'db' or 'meal'
-        
-        let state = {
-            activeTab: 'dashboard', historyTab: 'training', nutritionTab: 'log', metricsTab: 'checkin',
-            workoutEnv: 'gym', viewDate: new Date().toISOString().split('T')[0],
-            goals: { calories: 2500, water: 2500 },
-            equipment: { 
-                gym: { barbell: true, dumbbell: true, kettlebell: true, cable: true, machine: true, bodyweight: true }, 
-                home: { dumbbell: false, kettlebell: false, bodyweight: true, bands: false } 
-            },
-            dailyMeals: [], waterLogs: {}, workoutHistory: [], metricsHistory: [], customFoodDb: [],
-            currentPhotos: { front: null, side: null, back: null },
-            selectedMuscles: [],
-            nutritionalArchive: [],
-            mission: "",
-            wins: [],
-            addons: { steps: false, habits: false },
-            stepGoal: 10000,
-            dailySteps: 0,
-            habitList: [],
-            habitsCompleted: {}
-        };
-
-        let portionSelection = { item: null, mode: 'packet' };
-        let mealBuilderItems = [];
-
         window.onload = () => {
-            // Complete progress to 100% and hide loader
-            clearInterval(progressInterval);
-            document.getElementById('progress-bar').style.width = '100%';
-            document.getElementById('progress-text').innerText = '100% completed';
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 500); // Short delay to show completion
-
+            updateLoadProgress(80, 'Loading local storage data...');
             const saved = localStorage.getItem('fittrack_combined_v8');
             if (saved) state = { ...state, ...JSON.parse(saved) };
             document.getElementById('status-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -918,6 +859,8 @@
             document.getElementById('settings-wins').value = state.wins.join('\n');
             
             updateAddonUI();
+
+            updateLoadProgress(100, 'Rendering UI...');
         };
 
         function saveState() { localStorage.setItem('fittrack_combined_v8', JSON.stringify(state)); }
@@ -1084,7 +1027,7 @@
                 itemCount: today.length
             };
 
-            // Remove existing entry for the same date to avoid duplicates
+            // Remove existing existing entry for the same date to avoid duplicates
             state.nutritionalArchive = state.nutritionalArchive.filter(entry => entry.date !== state.viewDate);
             state.nutritionalArchive.unshift(archiveEntry);
             
@@ -1597,4 +1540,4 @@
         }
     </script>
 </body>
-                </html>
+                                                                                                </html>
