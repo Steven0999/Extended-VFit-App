@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitTrack Pro V8</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com" onload="updateLoadProgress(20, 'Tailwind CSS loaded', 100, 'Styles applied')"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript" onload="updateLoadProgress(40, 'QR Scanner loaded', 100, 'Scanner ready')"></script>
+    <script src="https://unpkg.com/lucide@latest" onload="updateLoadProgress(60, 'Icons loaded', 100, 'Icons initialized')"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
@@ -235,11 +235,12 @@
             <div id="progress-bar"></div>
         </div>
         <p id="progress-text" class="mt-2 text-sm text-slate-600">0% completed</p>
+        <p id="loading-status" class="mt-1 text-xs text-slate-500">Initializing...</p>
         <div id="sub-progress-container">
             <div id="sub-progress-bar"></div>
         </div>
-        <p id="loading-status" class="mt-1 text-xs text-slate-500">Initializing...</p>
         <p id="sub-progress-text" class="mt-1 text-xs text-slate-500">0% completed</p>
+        <p id="sub-loading-status" class="mt-1 text-xs text-slate-500">Setting up environment...</p>
     </div>
 
     <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-5 sticky top-0 z-40 flex justify-between items-center">
@@ -455,7 +456,7 @@
             <div class="flex bg-slate-100 p-1.5 rounded-2xl">
                 <button onclick="setNutritionTab('log')" id="nut-tab-log" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all bg-white text-indigo-600 shadow-sm">Diary</button>
                 <button onclick="setNutritionTab('database')" id="nut-tab-db" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all text-slate-400">Inventory</button>
-            </div>
+                    </div>
 
             <div id="nut-view-log" class="space-y-6">
                 <!-- Make a Meal Button -->
@@ -835,6 +836,45 @@
     </div>
 
     <script>
+        // Loading Progress Simulation
+        let mainProgress = 0;
+        let subProgress = 0;
+        let mainInterval;
+        let subInterval;
+        let loadingSteps = [
+            { main: 0, mainStatus: 'Initializing...', sub: 0, subStatus: 'Setting up environment...' },
+            { main: 10, mainStatus: 'Loading core scripts...', sub: 20, subStatus: 'Fetching Tailwind CSS...' },
+            { main: 30, mainStatus: 'Initializing QR scanner...', sub: 40, subStatus: 'Loading HTML5 QR Code...' },
+            { main: 50, mainStatus: 'Preparing icons...', sub: 60, subStatus: 'Loading Lucide icons...' },
+            { main: 70, mainStatus: 'Retrieving saved data...', sub: 80, subStatus: 'Accessing local storage...' },
+            { main: 90, mainStatus: 'Rendering dashboard...', sub: 90, subStatus: 'Updating UI components...' },
+            { main: 100, mainStatus: 'Ready!', sub: 100, subStatus: 'Initialization complete' }
+        ];
+        let stepIndex = 0;
+
+        function updateLoadProgress(mainPct, mainStatus, subPct, subStatus) {
+            mainProgress = mainPct;
+            subProgress = subPct;
+            document.getElementById('progress-bar').style.width = mainProgress + '%';
+            document.getElementById('progress-text').innerText = mainProgress + '% completed';
+            document.getElementById('loading-status').innerText = mainStatus;
+            document.getElementById('sub-progress-bar').style.width = subProgress + '%';
+            document.getElementById('sub-progress-text').innerText = subProgress + '% completed';
+            document.getElementById('sub-loading-status').innerText = subStatus;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLoadProgress(loadingSteps[stepIndex].main, loadingSteps[stepIndex].mainStatus, loadingSteps[stepIndex].sub, loadingSteps[stepIndex].subStatus);
+            mainInterval = setInterval(() => {
+                stepIndex++;
+                if (stepIndex < loadingSteps.length) {
+                    updateLoadProgress(loadingSteps[stepIndex].main, loadingSteps[stepIndex].mainStatus, loadingSteps[stepIndex].sub, loadingSteps[stepIndex].subStatus);
+                } else {
+                    clearInterval(mainInterval);
+                }
+            }, 800); // Adjust time per step
+        });
+
         // --- DATA & STATE ---
         const EXERCISE_DB = [
             { name: "Barbell Bench Press", focus: ["Full Body", "Upper Body", "Push"], equipment: "barbell", muscles: ["Chest", "Triceps", "Shoulders"] },
@@ -890,70 +930,45 @@
         let portionSelection = { item: null, mode: 'packet' };
         let mealBuilderItems = [];
 
-        // Loading Progress Simulation
-        let mainProgress = 0;
-        let subProgress = 0;
-        let mainInterval;
-        let subInterval;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateLoadProgress(0, 'Initializing...', 0, 'Setting up environment...');
-            mainInterval = setInterval(updateMainProgress, 50); // Main bar increments every 50ms
-            subInterval = setInterval(updateSubProgress, 30); // Sub bar increments faster, every 30ms
-        });
-
-        function updateMainProgress() {
-            if (mainProgress < 100) {
-                mainProgress += 1;
-                document.getElementById('progress-bar').style.width = mainProgress + '%';
-                document.getElementById('progress-text').innerText = mainProgress + '% completed';
-            } else {
-                clearInterval(mainInterval);
-            }
-        }
-
-        function updateSubProgress() {
-            if (subProgress < 100) {
-                subProgress += 2; // Faster increment for sub-bar
-                document.getElementById('sub-progress-bar').style.width = subProgress + '%';
-                document.getElementById('sub-progress-text').innerText = subProgress + '% completed';
-            } else {
-                clearInterval(subInterval);
-            }
-        }
-
         window.onload = () => {
+            // Step-by-step loading with delays for visibility
+            updateLoadProgress(70, 'Loading saved data...', 0, 'Fetching from local storage...');
             const saved = localStorage.getItem('fittrack_combined_v8');
             if (saved) state = { ...state, ...JSON.parse(saved) };
-            document.getElementById('status-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            document.getElementById('set-cal-goal').value = state.goals.calories;
-            document.getElementById('config-cals-goal').value = state.goals.calories;
-            document.getElementById('workout-date-input').value = state.viewDate;
-            initEquipmentSettings();
-            renderDashboard();
-            renderCustomDb();
-            renderMuscleSelection();
-            document.getElementById('photo-input').addEventListener('change', handlePhotoUpload);
-            lucide.createIcons();
-
-            // Added from first code: Sync UI with stored settings
-            document.getElementById('toggle-steps').checked = state.addons.steps;
-            document.getElementById('toggle-habits').checked = state.addons.habits;
-            document.getElementById('config-step-goal').value = state.stepGoal;
-            document.getElementById('config-habits-list').value = state.habitList.join(', ');
-            document.getElementById('settings-mission').value = state.mission;
-            document.getElementById('settings-wins').value = state.wins.join('\n');
-            
-            updateAddonUI();
-
-            // Complete loading
-            mainProgress = 100;
-            subProgress = 100;
-            updateMainProgress();
-            updateSubProgress();
             setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 500);
+                updateLoadProgress(80, 'Setting status date...', 30, 'Formatting current date...');
+                document.getElementById('status-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                document.getElementById('config-cals-goal').value = state.goals.calories;
+                document.getElementById('workout-date-input').value = state.viewDate;
+            }, 300);
+            setTimeout(() => {
+                updateLoadProgress(85, 'Initializing equipment...', 50, 'Loading gym and home setups...');
+                initEquipmentSettings();
+            }, 600);
+            setTimeout(() => {
+                updateLoadProgress(90, 'Rendering dashboard...', 70, 'Updating UI elements...');
+                renderDashboard();
+                renderCustomDb();
+                renderMuscleSelection();
+            }, 900);
+            setTimeout(() => {
+                updateLoadProgress(95, 'Syncing settings...', 90, 'Loading add-ons and reflections...');
+                document.getElementById('toggle-steps').checked = state.addons.steps;
+                document.getElementById('toggle-habits').checked = state.addons.habits;
+                document.getElementById('config-step-goal').value = state.stepGoal;
+                document.getElementById('config-habits-list').value = state.habitList.join(', ');
+                document.getElementById('settings-mission').value = state.mission;
+                document.getElementById('settings-wins').value = state.wins.join('\n');
+                updateAddonUI();
+            }, 1200);
+            setTimeout(() => {
+                updateLoadProgress(100, 'Ready!', 100, 'Initialization complete');
+                document.getElementById('photo-input').addEventListener('change', handlePhotoUpload);
+                lucide.createIcons();
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 500);
+            }, 1500);
         };
 
         function saveState() { localStorage.setItem('fittrack_combined_v8', JSON.stringify(state)); }
@@ -1633,4 +1648,4 @@
         }
     </script>
 </body>
-    </html>
+                    </html>
