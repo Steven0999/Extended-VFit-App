@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitTrack Pro V8</title>
-    <script src="https://cdn.tailwindcss.com" onload="updateLoadProgress(20, 'Tailwind CSS loaded', 100, 'Styles applied')"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript" onload="updateLoadProgress(40, 'QR Scanner loaded', 100, 'Scanner ready')"></script>
     <script src="https://unpkg.com/lucide@latest" onload="updateLoadProgress(60, 'Icons loaded', 100, 'Icons initialized')"></script>
     <style>
+        /* Font Import */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        
+
+        /* Root Variables */
         :root {
             --brand-primary: #4f46e5;
             --brand-secondary: #f43f5e;
             --bg-main: #f8fafc;
         }
 
+        /* Body Styles */
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             -webkit-tap-highlight-color: transparent;
             background-color: var(--bg-main);
             color: #1e293b;
         }
-        
+
+        /* Glass Card Styles */
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -1648,4 +1651,4 @@
         }
     </script>
 </body>
-                    </html>
+    </html>
